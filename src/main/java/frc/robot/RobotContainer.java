@@ -25,6 +25,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.vision.LimelightLoggerSubsystem;
 import limelight.Limelight;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -43,12 +44,14 @@ public class RobotContainer {
   private final CommandXboxController operator = new CommandXboxController(1);
   private final Limelight limelight1 =
       Constants.currentMode == Constants.Mode.REAL ? new Limelight("limelight") : null;
+  private final LimelightLoggerSubsystem limelightLoggerSubsystem;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    limelightLoggerSubsystem = new LimelightLoggerSubsystem(limelight1);
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -145,8 +148,7 @@ public class RobotContainer {
     operator
         .start()
         .toggleOnTrue(
-            new FaceHubCommand(
-                drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), limelight1));
+            new FaceHubCommand(drive, () -> -driver.getLeftY(), () -> -driver.getLeftX()));
   }
 
   /**

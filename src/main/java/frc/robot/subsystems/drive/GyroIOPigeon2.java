@@ -18,6 +18,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.generated.TunerConstants;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 
 /** IO implementation for Pigeon 2. */
@@ -60,17 +62,24 @@ public class GyroIOPigeon2 implements GyroIO {
     inputs.yawPosition = Rotation2d.fromDegrees(yaw.getValueAsDouble());
     inputs.yawVelocityRadPerSec = Units.degreesToRadians(yawVelocity.getValueAsDouble());
     inputs.yawPitchRollPosition =
-        new Rotation3d(roll.getValueAsDouble(), pitch.getValueAsDouble(), yaw.getValueAsDouble());
-    inputs.odometryYawPitchRollPositions =
-        rollPositionQueue.stream()
-            .mapToInt((Double value) -> rollPositionQueue.stream().toList().indexOf(value))
-            .mapToObj(
-                (int index) ->
-                    new Rotation3d(
-                        rollPositionQueue.stream().toList().get(index),
-                        pitchPositionQueue.stream().toList().get(index),
-                        yawPositionQueue.stream().toList().get(index)))
-            .toArray(Rotation3d[]::new);
+        new Rotation3d(
+            Units.degreesToRadians(roll.getValueAsDouble()),
+            Units.degreesToRadians(pitch.getValueAsDouble()),
+            Units.degreesToRadians(yaw.getValueAsDouble()));
+    List<Double> rollPositions = new ArrayList<>(rollPositionQueue);
+    List<Double> pitchPositions = new ArrayList<>(pitchPositionQueue);
+    List<Double> yawPositions = new ArrayList<>(yawPositionQueue);
+    int sampleCount =
+        Math.min(rollPositions.size(), Math.min(pitchPositions.size(), yawPositions.size()));
+    Rotation3d[] yawPitchRollPositions = new Rotation3d[sampleCount];
+    for (int i = 0; i < sampleCount; i++) {
+      yawPitchRollPositions[i] =
+          new Rotation3d(
+              Units.degreesToRadians(rollPositions.get(i)),
+              Units.degreesToRadians(pitchPositions.get(i)),
+              Units.degreesToRadians(yawPositions.get(i)));
+    }
+    inputs.odometryYawPitchRollPositions = yawPitchRollPositions;
     inputs.odometryYawTimestamps =
         yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     inputs.odometryYawPositions =
@@ -79,5 +88,7 @@ public class GyroIOPigeon2 implements GyroIO {
             .toArray(Rotation2d[]::new);
     yawTimestampQueue.clear();
     yawPositionQueue.clear();
+    pitchPositionQueue.clear();
+    rollPositionQueue.clear();
   }
 }
