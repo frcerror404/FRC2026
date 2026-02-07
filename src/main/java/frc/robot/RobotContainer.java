@@ -43,7 +43,7 @@ public class RobotContainer {
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
   private final Limelight limelight1 =
-      Constants.currentMode == Constants.Mode.REAL ? new Limelight("limelight") : null;
+      Constants.currentMode == Constants.Mode.REAL ? new Limelight("limelight1") : null;
   private final LimelightLoggerSubsystem limelightLoggerSubsystem;
 
   // Dashboard inputs

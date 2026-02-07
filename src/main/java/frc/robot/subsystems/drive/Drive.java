@@ -56,6 +56,7 @@ import limelight.networktables.AngularVelocity3d;
 import limelight.networktables.LimelightPoseEstimator;
 import limelight.networktables.LimelightPoseEstimator.EstimationMode;
 import limelight.networktables.LimelightSettings;
+import limelight.networktables.LimelightTargetData;
 import limelight.networktables.Orientation3d;
 import limelight.networktables.PoseEstimate;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -84,6 +85,7 @@ public class Drive extends SubsystemBase {
       LimelightSettings.ImuMode.InternalImuExternalAssist;
   private static final List<Double> LIMELIGHT_MT2_FIDUCIAL_IDS =
       IntStream.rangeClosed(1, 32).mapToObj((int id) -> (double) id).toList();
+
   private static final RobotConfig PP_CONFIG =
       new RobotConfig(
           ROBOT_MASS_KG,
@@ -119,13 +121,9 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator swervePoseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
 
-  Pose3d cameraOffset =
-      new Pose3d(
-          Inches.of(5).in(Meters),
-          Inches.of(5).in(Meters),
-          Inches.of(5).in(Meters),
-          Rotation3d.kZero);
+  Pose3d cameraOffset = new Pose3d(Inches.of(2), Inches.of(0), Inches.of(40), Rotation3d.kZero);
   Limelight limelight;
+  LimelightTargetData limelightTargetData;
   LimelightPoseEstimator poseEstimator;
   EstimationMode blue_MegaTag2;
   LimelightSettings.ImuMode activeImuMode = null;
@@ -138,6 +136,7 @@ public class Drive extends SubsystemBase {
       ModuleIO brModuleIO) {
     this.gyroIO = gyroIO;
     limelight = new Limelight("limelight-drive");
+    limelightTargetData = new LimelightTargetData(limelight);
     blue_MegaTag2 = EstimationMode.MEGATAG2;
     poseEstimator = new LimelightPoseEstimator(limelight, blue_MegaTag2);
     configureLimelight();
@@ -381,39 +380,60 @@ public class Drive extends SubsystemBase {
     return output;
   }
 
-  /** Returns the current odometry pose. */
-  @AutoLogOutput(key = "Odometry/Robot")
-  public Pose2d getPose() {
-    return swervePoseEstimator.getEstimatedPosition();
-  }
+   double limelight_aim_proportional() {    
+    // kP (constant of proportionality)
+    // this is a hand-tuned number that determines the aggressiveness of our proportional control loop
+    // if it is too high, the robot will oscillate around.
+    // if it is too low, the robot will never reach its target
+    // if the robot never turns in the correct direction, kP should be inverted.
+    double kP = .035;
 
-  /** Returns the current odometry rotation. */
-  public Rotation2d getRotation() {
-    return getPose().getRotation();
-  }
+    // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of 
+    // your limelight 3 feed, tx should return roughly 31 degrees.
+    double targetingAngularVelocity = limelightTargetData.getHorizontalOffset() * kP;
 
-  /** Resets the current odometry pose. */
-  public void setPose(Pose2d pose) {
-    swervePoseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
-  }
-
-  /** Adds a new timestamped vision measurement. */
-  public void addVisionMeasurement(
-      Pose2d visionRobotPoseMeters,
-      double timestampSeconds,
-      Matrix<N3, N1> visionMeasurementStdDevs) {
-    swervePoseEstimator.addVisionMeasurement(
-        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
-  }
-
-  /** Returns the maximum linear speed in meters per sec. */
-  public double getMaxLinearSpeedMetersPerSec() {
-    return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-  }
-
-  /** Returns the maximum angular speed in radians per sec. */
-  public double getMaxAngularSpeedRadPerSec() {
-    return getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS;
+    // convert to radians per second for our drive method
+    targetingAngularVelocity *= Drive.getMaxAngularSpeedRadPerSec();
+    
+        //invert since tx is positive when the target is to the right of the crosshair
+        targetingAngularVelocity *= -1.0;
+    
+        return targetingAngularVelocity;
+      }
+    
+      /** Returns the current odometry pose. */
+      @AutoLogOutput(key = "Odometry/Robot")
+      public Pose2d getPose() {
+        return swervePoseEstimator.getEstimatedPosition();
+      }
+    
+      /** Returns the current odometry rotation. */
+      public Rotation2d getRotation() {
+        return getPose().getRotation();
+      }
+    
+      /** Resets the current odometry pose. */
+      public void setPose(Pose2d pose) {
+        swervePoseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
+      }
+    
+      /** Adds a new timestamped vision measurement. */
+      public void addVisionMeasurement(
+          Pose2d visionRobotPoseMeters,
+          double timestampSeconds,
+          Matrix<N3, N1> visionMeasurementStdDevs) {
+        swervePoseEstimator.addVisionMeasurement(
+            visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+      }
+    
+      /** Returns the maximum linear speed in meters per sec. */
+      public static double getMaxLinearSpeedMetersPerSec() {
+              return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+            }
+          
+            /** Returns the maximum angular speed in radians per sec. */
+            public static double getMaxAngularSpeedRadPerSec() {
+          return getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS;
   }
 
   /** Returns an array of module translations. */
