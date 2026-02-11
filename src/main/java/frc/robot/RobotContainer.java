@@ -26,8 +26,14 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.LimelightLoggerSubsystem;
+import frc.robot.subsystems.intake.Intake;
+
 import limelight.Limelight;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+import frc.robot.commands.IntakeIn;
+import frc.robot.commands.IntakeOut;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -38,6 +44,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+
+  //Intake 
+  private final Intake intake = new Intake(1); 
+
 
   // Controller
   private final CommandXboxController driver = new CommandXboxController(0);
@@ -145,10 +155,13 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    operator
-        .start()
-        .toggleOnTrue(
-            new FaceHubCommand(drive, () -> -driver.getLeftY(), () -> -driver.getLeftX()));
+    operator.start().toggleOnTrue(new FaceHubCommand(drive, () -> -driver.getLeftY(), () -> -driver.getLeftX()));
+
+    operator.rightBumper().toggleonTrue(new IntakeIn(intake));
+
+    operator.leftBumper().toggleonTrue(new IntakeOut(intake));
+
+
   }
 
   /**
