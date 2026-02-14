@@ -382,7 +382,8 @@ public class Drive extends SubsystemBase {
 
   double limelight_aim_proportional() {
     // kP (constant of proportionality)
-    // this is a hand-tuned number that determines the aggressiveness of our proportional control loop
+    // this is a hand-tuned number that determines the aggressiveness of our proportional control
+    // loop
     // if it is too high, the robot will oscillate around.
     // if it is too low, the robot will never reach its target
     // if the robot never turns in the correct direction, kP should be inverted.
@@ -395,7 +396,7 @@ public class Drive extends SubsystemBase {
     // convert to radians per second for our drive method
     targetingAngularVelocity *= Drive.getMaxAngularSpeedRadPerSec();
 
-        //invert since tx is positive when the target is to the right of the crosshair
+    // invert since tx is positive when the target is to the right of the crosshair
     targetingAngularVelocity *= -1.0;
 
     return targetingAngularVelocity;
