@@ -20,6 +20,7 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FaceHubCommand;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
+import frc.robot.commands.ShooterOut;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -28,6 +29,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.vision.LimelightLoggerSubsystem;
 import limelight.Limelight;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -44,6 +46,9 @@ public class RobotContainer {
 
   // Intake
   private final Intake intake = new Intake(0);
+
+  // Shooter
+  private final Shooter shooter = new Shooter(8); // temp id
 
   // Controller
   private final CommandXboxController driver = new CommandXboxController(0);
@@ -158,6 +163,7 @@ public class RobotContainer {
 
     operator.rightBumper().whileTrue(new IntakeIn(intake));
     operator.leftBumper().whileTrue(new IntakeOut(intake));
+    operator.rightTrigger().whileTrue(new ShooterOut(shooter));
   }
 
   /**
