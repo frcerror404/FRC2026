@@ -43,7 +43,7 @@ public class RobotContainer {
   private final Drive drive;
 
   // Intake
-  private final Intake intake = new Intake(1);
+  private final Intake intake = new Intake(0);
 
   // Controller
   private final CommandXboxController driver = new CommandXboxController(0);
@@ -156,8 +156,8 @@ public class RobotContainer {
         .toggleOnTrue(
             new FaceHubCommand(drive, () -> -driver.getLeftY(), () -> -driver.getLeftX()));
 
-    operator.rightBumper().toggleOnTrue(new IntakeIn(intake));
-    operator.leftBumper().toggleOnTrue(new IntakeOut(intake));
+    operator.rightBumper().whileTrue(new IntakeIn(intake));
+    operator.leftBumper().whileTrue(new IntakeOut(intake));
   }
 
   /**
