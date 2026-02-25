@@ -166,9 +166,12 @@ public class RobotContainer {
 
     operator.rightBumper().whileTrue(new IntakeIn(intake));
     operator.leftBumper().whileTrue(new IntakeOut(intake));
-    operator.rightTrigger().whileTrue(new ShooterOut(shooter));
     operator.a().onTrue(new IntakeDeploy(intake));
     operator.b().onTrue(new IntakeStow(intake));
+    operator.rightTrigger().whileTrue(new ShooterOut(shooter));
+    operator.leftTrigger().whileTrue(new FeedBall(shooter));
+    
+
   }
 
   /**
