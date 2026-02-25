@@ -18,8 +18,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FaceHubCommand;
+import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
+import frc.robot.commands.IntakeStow;
 import frc.robot.commands.ShooterOut;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -45,10 +47,11 @@ public class RobotContainer {
   private final Drive drive;
 
   // Intake
-  private final Intake intake = new Intake(0);
+  // (Roller ID, Pivot ID)
+  private final Intake intake = new Intake(0, 1);
 
   // Shooter
-  private final Shooter shooter = new Shooter(8); // temp id
+  private final Shooter shooter = new Shooter(8, 9, 10); // temp id
 
   // Controller
   private final CommandXboxController driver = new CommandXboxController(0);
@@ -164,6 +167,8 @@ public class RobotContainer {
     operator.rightBumper().whileTrue(new IntakeIn(intake));
     operator.leftBumper().whileTrue(new IntakeOut(intake));
     operator.rightTrigger().whileTrue(new ShooterOut(shooter));
+    operator.a().onTrue(new IntakeDeploy(intake));
+    operator.b().onTrue(new IntakeStow(intake));
   }
 
   /**
