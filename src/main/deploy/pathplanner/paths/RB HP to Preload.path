@@ -1,0 +1,59 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.4845566037735849,
+        "y": 0.6262830188679243
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.3974390428425894,
+        "y": 1.006388785245231
+      },
+      "isLocked": false,
+      "linkedName": "HPB Pose"
+    },
+    {
+      "anchor": {
+        "x": 2.4702169811320753,
+        "y": 1.6853018867924527
+      },
+      "prevControl": {
+        "x": 2.2523976372109566,
+        "y": 1.5626041548909486
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "RB Prelaod Pose"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.0,
+      "rotationDegrees": 0.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 48.81407483429034
+  },
+  "reversed": false,
+  "folder": "Blue paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -0.545657593415688
+  },
+  "useDefaultConstraints": true
+}

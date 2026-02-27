@@ -1,0 +1,72 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.4051320754756436,
+        "y": 6.343330188675798
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.0355467220950954,
+        "y": 6.31096811899946
+      },
+      "isLocked": false,
+      "linkedName": "Start Pose"
+    },
+    {
+      "anchor": {
+        "x": 2.46194339623036,
+        "y": 6.905933962260703
+      },
+      "prevControl": {
+        "x": 2.620917746795563,
+        "y": 7.098877362931397
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "LB Preload Pose"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 4.61,
+        "y": 4.01
+      },
+      "rotationOffset": 0.0,
+      "minWaypointRelativePos": 0.15,
+      "maxWaypointRelativePos": 1.0,
+      "name": "Point Towards Zone"
+    }
+  ],
+  "eventMarkers": [
+    {
+      "name": "LB shoot preload",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -56.30993247402023
+  },
+  "reversed": false,
+  "folder": "Blue paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.45471886159753455
+  },
+  "useDefaultConstraints": false
+}

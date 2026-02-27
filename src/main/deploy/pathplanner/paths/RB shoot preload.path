@@ -1,0 +1,72 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.43822641509434,
+        "y": 1.577745283018868
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.0382963055390397,
+        "y": 1.5975137399877541
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.4702169811320753,
+        "y": 1.6853018867924527
+      },
+      "prevControl": {
+        "x": 2.327699065474011,
+        "y": 1.4718846062649145
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "RB Prelaod Pose"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 4.6,
+        "y": 4.0
+      },
+      "rotationOffset": 0.0,
+      "minWaypointRelativePos": 0.25,
+      "maxWaypointRelativePos": 1.0,
+      "name": "Point Towards hub"
+    }
+  ],
+  "eventMarkers": [
+    {
+      "name": "RB shoot preload",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 48.81407483429034
+  },
+  "reversed": false,
+  "folder": "Blue paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

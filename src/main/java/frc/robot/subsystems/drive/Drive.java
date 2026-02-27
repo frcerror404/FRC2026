@@ -51,14 +51,11 @@ import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.IntStream;
-import limelight.Limelight;
-import limelight.networktables.AngularVelocity3d;
-import limelight.networktables.LimelightPoseEstimator;
+import limelight.*;
+import limelight.Limelight.*;
+import limelight.networktables.*;
 import limelight.networktables.LimelightPoseEstimator.EstimationMode;
-import limelight.networktables.LimelightSettings;
-import limelight.networktables.LimelightTargetData;
-import limelight.networktables.Orientation3d;
-import limelight.networktables.PoseEstimate;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -121,12 +118,12 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator swervePoseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
 
-  Pose3d cameraOffset = new Pose3d(Inches.of(2), Inches.of(0), Inches.of(40), Rotation3d.kZero);
-  Limelight limelight;
+  Pose3d cameraOffset = new Pose3d(Inches.of(1.375), Inches.of(-3.053), Inches.of(-25.687202), new Rotation3d(0, 18.100000, 0));
+  Limelight shooterLimelight;
   LimelightTargetData limelightTargetData;
   LimelightPoseEstimator poseEstimator;
   EstimationMode blue_MegaTag2;
-  LimelightSettings.ImuMode activeImuMode = null;
+  LimelightSettings activeImuMode = null;
 
   public Drive(
       GyroIO gyroIO,
@@ -135,10 +132,13 @@ public class Drive extends SubsystemBase {
       ModuleIO blModuleIO,
       ModuleIO brModuleIO) {
     this.gyroIO = gyroIO;
-    limelight = new Limelight("limelight-drive");
-    limelightTargetData = new LimelightTargetData(limelight);
+    shooterLimelight = new Limelight("shooter-limelight");
+    limelightTargetData = new LimelightTargetData(shooterLimelight);
     blue_MegaTag2 = EstimationMode.MEGATAG2;
-    poseEstimator = new LimelightPoseEstimator(limelight, blue_MegaTag2);
+    poseEstimator = new LimelightPoseEstimator(shooterLimelight, blue_MegaTag2);
+    activeImuMode = new LimelightSettings(shooterLimelight).withImuMode(LIMELIGHT_IMU_MODE_ENABLED); // Force update on first loop
+
+
     configureLimelight();
     modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
     modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
@@ -241,7 +241,7 @@ public class Drive extends SubsystemBase {
 
     if (Constants.currentMode == Mode.REAL) {
       // Required for megatag2
-      limelight
+      shooterLimelight
           .getSettings()
           .withRobotOrientation(
               new Orientation3d(
@@ -254,9 +254,8 @@ public class Drive extends SubsystemBase {
       updateLimelightImuMode();
 
       // Get the vision estimate.
-      Optional<PoseEstimate> visionEstimate =
-          poseEstimator.getPoseEstimate(); // BotPose.BLUE_MEGATAG2.get(limelight);
-      LimelightLogger.log(limelight, visionEstimate);
+      PoseEstimate visionEstimate = new PoseEstimate(shooterLimelight, cameraOffset, blue_MegaTag2);
+      LimelightLogger.log(shooterLimelight, visionEstimate);
       visionEstimate.ifPresent(
           (PoseEstimate poseEstimate) -> {
             // If the average tag distance is less than 4 meters,
