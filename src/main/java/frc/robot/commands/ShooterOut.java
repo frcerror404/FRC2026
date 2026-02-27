@@ -14,12 +14,12 @@ public class ShooterOut extends Command {
 
   @Override
   public void initialize() {
-    shooter.shooterOut();
+    shooter.runShooter();
   }
 
   @Override
   public void end(boolean interrupted) {
-    shooter.stop();
+    shooter.stopShooter();
   }
 
   @Override

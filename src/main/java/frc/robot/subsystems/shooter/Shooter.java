@@ -1,7 +1,5 @@
 package frc.robot.subsystems.shooter;
 
-import java.util.List;
-
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -9,13 +7,13 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.List;
 
 public class Shooter extends SubsystemBase {
 
-  private static final double SHOOTER_SPEED = 0.7;
-  private static final double FEEDER_SPEED = 0.6;
+  private static final double SHOOTER_SPEED = 0.2;
+  private static final double FEEDER_SPEED = 0.2;
 
   // Flywheel motors
   private final TalonFX leftMotor;
@@ -23,7 +21,7 @@ public class Shooter extends SubsystemBase {
   private final TalonFX rightMotor;
   private final List<TalonFX> shooterMotors;
 
-  // Feeder motor 
+  // Feeder motor
   private final TalonFX feederMotor;
 
   private final VoltageOut voltageRequest = new VoltageOut(0);
@@ -46,39 +44,38 @@ public class Shooter extends SubsystemBase {
 
   private void configureShooterMotor(TalonFX motor, InvertedValue inversion) {
 
-    TalonFXConfiguration config = new TalonFXConfiguration()
-        .withMotorOutput(
-            new MotorOutputConfigs()
-                .withInverted(inversion)
-                .withNeutralMode(NeutralModeValue.Coast))
-        .withCurrentLimits(
-            new CurrentLimitsConfigs()
-                .withStatorCurrentLimit(80)
-                .withStatorCurrentLimitEnable(true)
-                .withSupplyCurrentLimit(40)
-                .withSupplyCurrentLimitEnable(true));
+    TalonFXConfiguration config =
+        new TalonFXConfiguration()
+            .withMotorOutput(
+                new MotorOutputConfigs()
+                    .withInverted(inversion)
+                    .withNeutralMode(NeutralModeValue.Coast))
+            .withCurrentLimits(
+                new CurrentLimitsConfigs()
+                    .withStatorCurrentLimit(80)
+                    .withStatorCurrentLimitEnable(true)
+                    .withSupplyCurrentLimit(40)
+                    .withSupplyCurrentLimitEnable(true));
 
     motor.getConfigurator().apply(config);
   }
 
   private void configureFeederMotor(TalonFX motor) {
 
-    TalonFXConfiguration config = new TalonFXConfiguration()
-        .withMotorOutput(
-            new MotorOutputConfigs()
-                .withNeutralMode(NeutralModeValue.Brake))
-        .withCurrentLimits(
-            new CurrentLimitsConfigs()
-                .withStatorCurrentLimit(60)
-                .withStatorCurrentLimitEnable(true)
-                .withSupplyCurrentLimit(30)
-                .withSupplyCurrentLimitEnable(true));
+    TalonFXConfiguration config =
+        new TalonFXConfiguration()
+            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
+            .withCurrentLimits(
+                new CurrentLimitsConfigs()
+                    .withStatorCurrentLimit(60)
+                    .withStatorCurrentLimitEnable(true)
+                    .withSupplyCurrentLimit(30)
+                    .withSupplyCurrentLimitEnable(true));
 
     motor.getConfigurator().apply(config);
   }
 
-
-//Flywheel
+  // Flywheel
   public void runShooter() {
     for (TalonFX motor : shooterMotors) {
       motor.setControl(voltageRequest.withOutput(SHOOTER_SPEED * 12.0));
@@ -91,7 +88,7 @@ public class Shooter extends SubsystemBase {
     }
   }
 
-  //Feeder 
+  // Feeder
 
   public void runFeeder() {
     feederMotor.setControl(voltageRequest.withOutput(FEEDER_SPEED * 12.0));
@@ -100,7 +97,6 @@ public class Shooter extends SubsystemBase {
   public void stopFeeder() {
     feederMotor.setControl(voltageRequest.withOutput(0.0));
   }
-
 
   public void stopAll() {
     stopShooter();
