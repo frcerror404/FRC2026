@@ -254,22 +254,8 @@ public class Drive extends SubsystemBase {
       updateLimelightImuMode();
 
       // Get the vision estimate.
-      PoseEstimate visionEstimate = new PoseEstimate(shooterLimelight, cameraOffset, blue_MegaTag2);
-      LimelightLogger.log(shooterLimelight, visionEstimate);
-      visionEstimate.ifPresent(
-          (PoseEstimate poseEstimate) -> {
-            // If the average tag distance is less than 4 meters,
-            // there are more than 0 tags in view,
-            // and the average ambiguity between tags is less than 30% then we update the pose
-            // estimation.
-            if (poseEstimate.avgTagDist < 4
-                && poseEstimate.tagCount > 0
-                && poseEstimate.getMinTagAmbiguity() < 0.3) {
-              swervePoseEstimator.addVisionMeasurement(
-                  poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds);
-            }
-          });
-    }
+      LimelightPoseEstimator visionEstimate = new LimelightPoseEstimator(shooterLimelight, blue_MegaTag2);
+      
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
