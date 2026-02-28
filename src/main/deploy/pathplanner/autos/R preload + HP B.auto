@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RB shoot preload"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RB shoot preload"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RB Preload to HP"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RB HP to Preload"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Blue autos",
+  "choreoAuto": false
+}

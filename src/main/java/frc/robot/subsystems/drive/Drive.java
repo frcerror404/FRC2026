@@ -20,6 +20,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -44,21 +45,15 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
-import frc.robot.util.LimelightLogger;
 import frc.robot.util.LocalADStarAK;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.IntStream;
-import limelight.Limelight;
-import limelight.networktables.AngularVelocity3d;
-import limelight.networktables.LimelightPoseEstimator;
+import limelight.*;
+import limelight.Limelight.*;
+import limelight.networktables.*;
 import limelight.networktables.LimelightPoseEstimator.EstimationMode;
-import limelight.networktables.LimelightSettings;
-import limelight.networktables.LimelightTargetData;
-import limelight.networktables.Orientation3d;
-import limelight.networktables.PoseEstimate;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -121,12 +116,18 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator swervePoseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
 
-  Pose3d cameraOffset = new Pose3d(Inches.of(2), Inches.of(0), Inches.of(40), Rotation3d.kZero);
-  Limelight limelight;
+  Pose3d cameraOffset =
+      new Pose3d(
+          Inches.of(1.375),
+          Inches.of(-3.053),
+          Inches.of(-25.687202),
+          new Rotation3d(0, 18.100000, 0));
+  Limelight shooterLimelight;
   LimelightTargetData limelightTargetData;
-  LimelightPoseEstimator poseEstimator;
+  LimelightPoseEstimator visionPoseEstimator;
   EstimationMode blue_MegaTag2;
-  LimelightSettings.ImuMode activeImuMode = null;
+  PoseEstimate visionPoseEstimate = new PoseEstimate(shooterLimelight, getName(), false);
+  LimelightResults shooterLimelightResults = new LimelightResults();
 
   public Drive(
       GyroIO gyroIO,
@@ -135,10 +136,11 @@ public class Drive extends SubsystemBase {
       ModuleIO blModuleIO,
       ModuleIO brModuleIO) {
     this.gyroIO = gyroIO;
-    limelight = new Limelight("limelight-drive");
-    limelightTargetData = new LimelightTargetData(limelight);
+    shooterLimelight = new Limelight("shooter-limelight");
+    limelightTargetData = new LimelightTargetData(shooterLimelight);
     blue_MegaTag2 = EstimationMode.MEGATAG2;
-    poseEstimator = new LimelightPoseEstimator(limelight, blue_MegaTag2);
+    visionPoseEstimator = new LimelightPoseEstimator(shooterLimelight, blue_MegaTag2);
+
     configureLimelight();
     modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
     modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
@@ -241,7 +243,7 @@ public class Drive extends SubsystemBase {
 
     if (Constants.currentMode == Mode.REAL) {
       // Required for megatag2
-      limelight
+      shooterLimelight
           .getSettings()
           .withRobotOrientation(
               new Orientation3d(
@@ -251,27 +253,13 @@ public class Drive extends SubsystemBase {
                       RadiansPerSecond.of(0),
                       RadiansPerSecond.of(gyroInputs.yawVelocityRadPerSec))))
           .save();
-      updateLimelightImuMode();
 
       // Get the vision estimate.
-      Optional<PoseEstimate> visionEstimate =
-          poseEstimator.getPoseEstimate(); // BotPose.BLUE_MEGATAG2.get(limelight);
-      LimelightLogger.log(limelight, visionEstimate);
-      visionEstimate.ifPresent(
-          (PoseEstimate poseEstimate) -> {
-            // If the average tag distance is less than 4 meters,
-            // there are more than 0 tags in view,
-            // and the average ambiguity between tags is less than 30% then we update the pose
-            // estimation.
-            if (poseEstimate.avgTagDist < 4
-                && poseEstimate.tagCount > 0
-                && poseEstimate.getMinTagAmbiguity() < 0.3) {
-              swervePoseEstimator.addVisionMeasurement(
-                  poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds);
-            }
-          });
-    }
 
+      swervePoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+      swervePoseEstimator.addVisionMeasurement(
+          shooterLimelightResults.getBotPose2d(), visionPoseEstimate.getTimestampSeconds());
+    }
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
   }
@@ -448,22 +436,12 @@ public class Drive extends SubsystemBase {
   }
 
   private void configureLimelight() {
-    limelight
+    shooterLimelight
         .getSettings()
         .withCameraOffset(cameraOffset)
         .withImuAssistAlpha(LIMELIGHT_IMU_ASSIST_ALPHA)
         .withAprilTagIdFilter(LIMELIGHT_MT2_FIDUCIAL_IDS)
-        .withImuMode(LIMELIGHT_IMU_MODE_DISABLED)
+        .withImuMode(LIMELIGHT_IMU_MODE_ENABLED)
         .save();
-    activeImuMode = LIMELIGHT_IMU_MODE_DISABLED;
-  }
-
-  private void updateLimelightImuMode() {
-    LimelightSettings.ImuMode desiredMode =
-        DriverStation.isDisabled() ? LIMELIGHT_IMU_MODE_DISABLED : LIMELIGHT_IMU_MODE_ENABLED;
-    if (desiredMode != activeImuMode) {
-      limelight.getSettings().withImuMode(desiredMode).save();
-      activeImuMode = desiredMode;
-    }
   }
 }

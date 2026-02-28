@@ -135,6 +135,10 @@ public class PoseEstimate {
    *
    * @return Min ambiguity from observed tags.
    */
+  public double getTimestampSeconds() {
+    return timestampSeconds;
+  }
+
   public double getMinTagAmbiguity() {
     if (!hasData) {
       return 1;

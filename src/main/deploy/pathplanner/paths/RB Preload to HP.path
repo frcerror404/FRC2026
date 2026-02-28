@@ -3,48 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 2.4702169811320753,
+        "y": 1.6853018867924527
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.013282910175676,
-        "y": 6.5274984191074985
+        "x": 2.3092893462015,
+        "y": 1.493984620672399
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "RB Prelaod Pose"
     },
     {
       "anchor": {
-        "x": 5.166769560390973,
-        "y": 5.0964860911203305
+        "x": 0.4845566037735849,
+        "y": 0.6262830188679243
       },
       "prevControl": {
-        "x": 4.166769560390973,
-        "y": 6.0964860911203305
-      },
-      "nextControl": {
-        "x": 6.166769560390973,
-        "y": 4.0964860911203305
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 7.0,
-        "y": 1.0
-      },
-      "prevControl": {
-        "x": 6.75,
-        "y": 2.5
+        "x": 0.2346039308685146,
+        "y": 0.6311473078818447
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "HPB Pose"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -58,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -0.545657593415688
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Blue paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 48.81407483429034
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
