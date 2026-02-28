@@ -20,6 +20,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -44,10 +45,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
-import frc.robot.util.LimelightLogger;
 import frc.robot.util.LocalADStarAK;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.IntStream;
@@ -55,7 +54,6 @@ import limelight.*;
 import limelight.Limelight.*;
 import limelight.networktables.*;
 import limelight.networktables.LimelightPoseEstimator.EstimationMode;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -118,12 +116,18 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator swervePoseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
 
-  Pose3d cameraOffset = new Pose3d(Inches.of(1.375), Inches.of(-3.053), Inches.of(-25.687202), new Rotation3d(0, 18.100000, 0));
+  Pose3d cameraOffset =
+      new Pose3d(
+          Inches.of(1.375),
+          Inches.of(-3.053),
+          Inches.of(-25.687202),
+          new Rotation3d(0, 18.100000, 0));
   Limelight shooterLimelight;
   LimelightTargetData limelightTargetData;
-  LimelightPoseEstimator poseEstimator;
+  LimelightPoseEstimator visionPoseEstimator;
   EstimationMode blue_MegaTag2;
-  LimelightSettings activeImuMode = null;
+  PoseEstimate visionPoseEstimate = new PoseEstimate(shooterLimelight, getName(), false);
+  LimelightResults shooterLimelightResults = new LimelightResults();
 
   public Drive(
       GyroIO gyroIO,
@@ -135,9 +139,7 @@ public class Drive extends SubsystemBase {
     shooterLimelight = new Limelight("shooter-limelight");
     limelightTargetData = new LimelightTargetData(shooterLimelight);
     blue_MegaTag2 = EstimationMode.MEGATAG2;
-    poseEstimator = new LimelightPoseEstimator(shooterLimelight, blue_MegaTag2);
-    activeImuMode = new LimelightSettings(shooterLimelight).withImuMode(LIMELIGHT_IMU_MODE_ENABLED); // Force update on first loop
-
+    visionPoseEstimator = new LimelightPoseEstimator(shooterLimelight, blue_MegaTag2);
 
     configureLimelight();
     modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
@@ -251,12 +253,13 @@ public class Drive extends SubsystemBase {
                       RadiansPerSecond.of(0),
                       RadiansPerSecond.of(gyroInputs.yawVelocityRadPerSec))))
           .save();
-      updateLimelightImuMode();
 
       // Get the vision estimate.
-      LimelightPoseEstimator visionEstimate = new LimelightPoseEstimator(shooterLimelight, blue_MegaTag2);
-      
 
+      swervePoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+      swervePoseEstimator.addVisionMeasurement(
+          shooterLimelightResults.getBotPose2d(), visionPoseEstimate.getTimestampSeconds());
+    }
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
   }
@@ -433,22 +436,12 @@ public class Drive extends SubsystemBase {
   }
 
   private void configureLimelight() {
-    limelight
+    shooterLimelight
         .getSettings()
         .withCameraOffset(cameraOffset)
         .withImuAssistAlpha(LIMELIGHT_IMU_ASSIST_ALPHA)
         .withAprilTagIdFilter(LIMELIGHT_MT2_FIDUCIAL_IDS)
-        .withImuMode(LIMELIGHT_IMU_MODE_DISABLED)
+        .withImuMode(LIMELIGHT_IMU_MODE_ENABLED)
         .save();
-    activeImuMode = LIMELIGHT_IMU_MODE_DISABLED;
-  }
-
-  private void updateLimelightImuMode() {
-    LimelightSettings.ImuMode desiredMode =
-        DriverStation.isDisabled() ? LIMELIGHT_IMU_MODE_DISABLED : LIMELIGHT_IMU_MODE_ENABLED;
-    if (desiredMode != activeImuMode) {
-      limelight.getSettings().withImuMode(desiredMode).save();
-      activeImuMode = desiredMode;
-    }
   }
 }
