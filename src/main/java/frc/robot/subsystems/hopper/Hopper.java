@@ -11,8 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Hopper extends SubsystemBase {
 
- 
-  private static final double HOPPER_SPEED = 0.7;
+  private static final double HOPPER_SPEED = 0.2;
 
   private final TalonFX hopperMotor;
 
@@ -24,7 +23,6 @@ public class Hopper extends SubsystemBase {
     hopperMotor = new TalonFX(hopperID);
 
     configureHopper();
-
   }
 
   private void configureHopper() {
@@ -41,16 +39,14 @@ public class Hopper extends SubsystemBase {
     hopperMotor.getConfigurator().apply(config);
   }
 
-  
   // Roller Control
   public void runHopper() {
     hopperMotor.setControl(new DutyCycleOut(HOPPER_SPEED));
   }
 
-
   public void stopHopper() {
     hopperMotor.setControl(new DutyCycleOut(0.0));
   }
 
-  // 
+  //
 }

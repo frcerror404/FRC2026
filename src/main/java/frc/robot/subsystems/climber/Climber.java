@@ -11,10 +11,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
 
- 
-    private static final double CLIMBER_UP_SPEED = 0.2;
-    private static final double CLIMBER_DOWN_SPEED = -0.2;
-
+  private static final double CLIMBER_UP_SPEED = 0.2;
+  private static final double CLIMBER_DOWN_SPEED = -0.2;
 
   private final TalonFX climberMotor;
 
@@ -23,10 +21,9 @@ public class Climber extends SubsystemBase {
 
   // CAN IDs
   public Climber(int climberID) {
-   climberMotor = new TalonFX(climberID);
+    climberMotor = new TalonFX(climberID);
 
     configureClimber();
-
   }
 
   private void configureClimber() {
@@ -43,13 +40,12 @@ public class Climber extends SubsystemBase {
     climberMotor.getConfigurator().apply(config);
   }
 
-  
   // Climber Up
   public void climberUp() {
     climberMotor.setControl(new DutyCycleOut(CLIMBER_UP_SPEED));
   }
 
-   // Climber Down
+  // Climber Down
   public void climberDown() {
     climberMotor.setControl(new DutyCycleOut(CLIMBER_DOWN_SPEED));
   }
@@ -57,5 +53,4 @@ public class Climber extends SubsystemBase {
   public void stop() {
     climberMotor.setControl(new DutyCycleOut(0.0));
   }
-
 }

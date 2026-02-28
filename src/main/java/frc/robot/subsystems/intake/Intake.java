@@ -17,8 +17,8 @@ public class Intake extends SubsystemBase {
 
   private static final double PIVOT_GEAR_RATIO = 50.0;
 
-  private static final double INTAKE_SPEED = 0.7;
-  private static final double OUTTAKE_SPEED = -0.7;
+  private static final double INTAKE_SPEED = 0.2;
+  private static final double OUTTAKE_SPEED = -0.2;
 
   private final TalonFX rollerMotor;
   private final TalonFX pivotMotor;

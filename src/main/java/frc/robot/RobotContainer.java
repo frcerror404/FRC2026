@@ -16,25 +16,28 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.ClimberDown;
+import frc.robot.commands.ClimberUp;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FaceHubCommand;
+import frc.robot.commands.HopperOff;
+import frc.robot.commands.HopperOn;
 import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
 import frc.robot.commands.IntakeStow;
 import frc.robot.commands.ShooterOut;
-import frc.robot.commands.HopperOff;
-import frc.robot.commands.HopperOn;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.vision.LimelightLoggerSubsystem;
 import limelight.Limelight;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -56,12 +59,13 @@ public class RobotContainer {
   // Shooter
   private final Shooter shooter = new Shooter(8, 9, 10, 11); // temp id
 
-
-  //Hopper
+  // Hopper
   private final Hopper hopper = new Hopper(1);
   private boolean HopperOn = false;
 
+  // climber
 
+  private final Climber climber = new Climber(1);
 
   // Controller
   private final CommandXboxController driver = new CommandXboxController(0);
@@ -174,22 +178,22 @@ public class RobotContainer {
         .toggleOnTrue(
             new FaceHubCommand(drive, () -> -driver.getLeftY(), () -> -driver.getLeftX()));
 
-    operator.rightBumper().whileTrue(new IntakeIn(intake));
-    operator.leftBumper().whileTrue(new IntakeOut(intake));
+    operator.rightTrigger().whileTrue(new IntakeIn(intake));
+    operator.leftTrigger().whileTrue(new IntakeOut(intake));
     operator.a().onTrue(new IntakeDeploy(intake));
     operator.b().onTrue(new IntakeStow(intake));
-    operator.rightTrigger().whileTrue(new ShooterOut(shooter));
-    
-    if (HopperOn)
-    {
-    operator.x().toggleOnTrue(new HopperOn(hopper));
+    operator.x().whileTrue(new ShooterOut(shooter));
+    operator.rightBumper().whileTrue(new ClimberUp(climber));
+    operator.leftBumper().whileTrue(new ClimberDown(climber));
+
+    if (HopperOn) {
+      operator.x().toggleOnTrue(new HopperOn(hopper));
+    } else {
+      operator.x().toggleOnTrue(new HopperOff(hopper));
     }
-    else
-    {
-    operator.x().toggleOnTrue(new HopperOff(hopper));
-    }
-    
-    //operator.leftTrigger().whileTrue(new FeedBall(shooter)); - if we want it to be controlled seperaely
+
+    // operator.leftTrigger().whileTrue(new FeedBall(shooter)); - if we want it to be controlled
+    // seperaely
   }
 
   /**
