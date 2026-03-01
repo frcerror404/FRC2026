@@ -1,20 +1,20 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intakePivot.IntakePivot;
 
 public class IntakeStow extends Command {
 
-  private final Intake intake;
+  private final IntakePivot intakeStow;
 
-  public IntakeStow(Intake intake) {
-    this.intake = intake;
-    addRequirements(intake);
+  public IntakeStow(IntakePivot intakePivot) {
+    this.intakeStow = intakePivot;
+    addRequirements(intakePivot);
   }
 
   @Override
   public void initialize() {
-    intake.pivotToStow();
+    intakeStow.pivotToStow();
   }
 
   @Override

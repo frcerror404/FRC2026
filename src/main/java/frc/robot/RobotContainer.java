@@ -20,16 +20,20 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 // import frc.robot.commands.ClimberUp;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FaceHubCommand;
+import frc.robot.commands.FeedFuel;
+import frc.robot.commands.FeedFuelReverse;
+import frc.robot.commands.HopperToFeeder;
 // import frc.robot.commands.FeedBall;
 // import frc.robot.commands.FeedBallReverse;
-import frc.robot.commands.HopperOff;
-import frc.robot.commands.HopperOn;
 import frc.robot.commands.IntakeDeploy;
-import frc.robot.commands.IntakeIn;
-import frc.robot.commands.IntakeOut;
+import frc.robot.commands.IntakeFuel;
+import frc.robot.commands.IntakeFuelReverse;
 import frc.robot.commands.IntakeStow;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.ShootStop;
+import frc.robot.commands.StopFeederHopper;
+import frc.robot.commands.StopHopper;
+import frc.robot.commands.StopIntake;
+import frc.robot.commands.StopShooter;
 // import frc.robot.commands.ShooterOut;
 import frc.robot.generated.TunerConstants;
 // import frc.robot.subsystems.climber.Climber;
@@ -39,8 +43,13 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.feeder.FeederIOTalonFX;
 import frc.robot.subsystems.hopper.Hopper;
+import frc.robot.subsystems.hopper.HopperIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.intakePivot.IntakePivot;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.util.CanDef;
@@ -59,16 +68,14 @@ public class RobotContainer {
 
   private final Shooter shooter1;
   private final Shooter shooter2;
-
   private final Shooter shooter3;
+  private final Feeder feeder;
+  private final Hopper hopper;
+  private final Intake intake;
 
   // Intake
   // (Roller ID, Pivot ID)
-  private final Intake intake = new Intake(14, 16);
-
-  // Hopper
-  private final Hopper hopper = new Hopper(12);
-  private boolean HopperOn = false;
+  private final IntakePivot intakePivot = new IntakePivot(16);
 
   // climber
 
@@ -107,6 +114,9 @@ public class RobotContainer {
         shooter2 = new Shooter(new ShooterIOTalonFX(rioCanBuilder.id(3).build()));
         shooter3 = new Shooter(new ShooterIOTalonFX(rioCanBuilder.id(7).build()));
 
+        feeder = new Feeder(new FeederIOTalonFX(rioCanBuilder.id(6).build()));
+        intake = new Intake(new IntakeIOTalonFX(rioCanBuilder.id(14).build()));
+        hopper = new Hopper(new HopperIOTalonFX(rioCanBuilder.id(12).build()));
         break;
 
       case SIM:
@@ -123,6 +133,10 @@ public class RobotContainer {
         shooter2 = null;
         shooter3 = null;
 
+        feeder = null;
+        intake = null;
+        hopper = null;
+
         break;
 
       default:
@@ -138,6 +152,10 @@ public class RobotContainer {
         shooter1 = null;
         shooter2 = null;
         shooter3 = null;
+
+        feeder = null;
+        intake = null;
+        hopper = null;
 
         break;
     }
@@ -203,22 +221,28 @@ public class RobotContainer {
         .toggleOnTrue(
             new FaceHubCommand(drive, () -> -driver.getLeftY(), () -> -driver.getLeftX()));
 
-    operator.rightTrigger().whileTrue(new IntakeIn(intake));
-    operator.leftTrigger().whileTrue(new IntakeOut(intake));
-    operator.a().onTrue(new IntakeDeploy(intake));
-    operator.b().onTrue(new IntakeStow(intake));
-    operator.x().whileTrue(new Shoot(shooter1)).whileFalse(new ShootStop(shooter1));
-    // operator.rightBumper().whileTrue(new ClimberUp(climber));
-    // operator.leftBumper().whileTrue(new ClimberDown(climber));
+    // operator.rightTrigger().whileTrue(new IntakeIn(intake));
+    operator.leftTrigger().whileTrue(new HopperToFeeder(hopper)).whileFalse(new StopHopper(hopper));
+    operator.a().onTrue(new IntakeDeploy(intakePivot));
+    operator.b().onTrue(new IntakeStow(intakePivot));
+    operator
+        .rightTrigger()
+        .whileTrue(new Shoot(shooter1, shooter2, shooter3))
+        .whileFalse(new StopShooter(shooter1, shooter2, shooter3));
+    operator
+        .rightBumper()
+        .whileTrue(new FeedFuel(feeder, hopper))
+        .whileFalse(new StopFeederHopper(feeder, hopper));
+    operator
+        .leftBumper()
+        .whileTrue(new FeedFuelReverse(feeder, hopper))
+        .whileFalse(new StopFeederHopper(feeder, hopper));
 
-    if (HopperOn) {
-      operator.y().toggleOnTrue(new HopperOn(hopper));
-    } else {
-      operator.y().toggleOnTrue(new HopperOff(hopper));
-    }
-
-    // driver.rightTrigger().whileTrue(new FeedBall(shooter));
-    // driver.leftTrigger().whileTrue(new FeedBallReverse(shooter));
+    driver.rightTrigger().whileTrue(new IntakeFuel(intake)).whileFalse(new StopIntake(intake));
+    driver
+        .leftTrigger()
+        .whileTrue(new IntakeFuelReverse(intake))
+        .whileFalse(new StopIntake(intake));
 
     // seperaely
   }

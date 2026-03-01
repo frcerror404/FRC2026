@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.feeder;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
@@ -11,22 +11,18 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LoggedTunableNumber;
 import java.util.function.DoubleSupplier;
 
-public class Intake extends SubsystemBase {
-  private final IntakeIO m_IntakeIO;
+public class Feeder extends SubsystemBase {
+  private final FeederIO m_FeederIO;
 
-  IntakeIO.IntakeIOInputs loggedintake = new IntakeIO.IntakeIOInputs();
+  FeederIOInputsAutoLogged loggedfeeder = new FeederIOInputsAutoLogged();
 
-  public Intake(IntakeIO IntakeIO) {
-    m_IntakeIO = IntakeIO;
-    loggedintake.angularVelocity = DegreesPerSecond.mutable(0);
-    loggedintake.supplyCurrent = Amps.mutable(0);
-    loggedintake.torqueCurrent = Amps.mutable(0);
-    loggedintake.voltageSetPoint = Volts.mutable(0);
-    loggedintake.voltage = Volts.mutable(0);
-  }
-
-  public void setTarget(Voltage target) {
-    m_IntakeIO.setTarget(target);
+  public Feeder(FeederIO FeederIO) {
+    m_FeederIO = FeederIO;
+    loggedfeeder.angularVelocity = DegreesPerSecond.mutable(0);
+    loggedfeeder.supplyCurrent = Amps.mutable(0);
+    loggedfeeder.torqueCurrent = Amps.mutable(0);
+    loggedfeeder.voltageSetPoint = Volts.mutable(0);
+    loggedfeeder.voltage = Volts.mutable(0);
   }
 
   public Command getNewSetVoltsCommand(DoubleSupplier volts) {
@@ -35,6 +31,10 @@ public class Intake extends SubsystemBase {
           setTarget(Volts.of((volts.getAsDouble())));
         },
         this);
+  }
+
+  public void setTarget(Voltage target) {
+    m_FeederIO.setTarget(target);
   }
 
   public Command getNewSetVoltsCommand(LoggedTunableNumber volts) {
@@ -54,11 +54,11 @@ public class Intake extends SubsystemBase {
   }
 
   public Command getStopCommand() {
-    return new InstantCommand(() -> m_IntakeIO.stop(), this);
+    return new InstantCommand(() -> m_FeederIO.stop(), this);
   }
 
   @Override
   public void periodic() {
-    m_IntakeIO.updateInputs(loggedintake);
+    m_FeederIO.updateInputs(loggedfeeder);
   }
 }

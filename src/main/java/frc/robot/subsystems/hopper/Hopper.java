@@ -1,52 +1,64 @@
 package frc.robot.subsystems.hopper;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.configs.*;
-import com.ctre.phoenix6.controls.*;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.*;
-import edu.wpi.first.units.measure.*;
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.LoggedTunableNumber;
+import java.util.function.DoubleSupplier;
 
 public class Hopper extends SubsystemBase {
+  private final HopperIO m_HopperIO;
 
-  private static final double HOPPER_SPEED = 0.2;
+  HopperIOInputsAutoLogged loggedhopper = new HopperIOInputsAutoLogged();
 
-  private final TalonFX hopperMotor;
-
-  private final VoltageOut rollerRequest = new VoltageOut(0);
-  private final MotionMagicVoltage pivotRequest = new MotionMagicVoltage(0);
-
-  // CAN IDs
-  public Hopper(int hopperID) {
-    hopperMotor = new TalonFX(hopperID);
-
-    configureHopper();
+  public Hopper(HopperIO hopperIO) {
+    m_HopperIO = hopperIO;
+    loggedhopper.angularVelocity = DegreesPerSecond.mutable(0);
+    loggedhopper.supplyCurrent = Amps.mutable(0);
+    loggedhopper.torqueCurrent = Amps.mutable(0);
+    loggedhopper.voltageSetPoint = Volts.mutable(0);
+    loggedhopper.voltage = Volts.mutable(0);
   }
 
-  private void configureHopper() {
-    TalonFXConfiguration config =
-        new TalonFXConfiguration()
-            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
-            .withCurrentLimits(
-                new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(60)
-                    .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(35)
-                    .withSupplyCurrentLimitEnable(true));
-
-    hopperMotor.getConfigurator().apply(config);
+  public Command getNewSetVoltsCommand(DoubleSupplier volts) {
+    return new InstantCommand(
+        () -> {
+          setTarget(Volts.of((volts.getAsDouble())));
+        },
+        this);
   }
 
-  // Roller Control
-  public void runHopper() {
-    hopperMotor.setControl(new DutyCycleOut(HOPPER_SPEED));
+  public void setTarget(Voltage target) {
+    m_HopperIO.setTarget(target);
   }
 
-  public void stopHopper() {
-    hopperMotor.setControl(new DutyCycleOut(0.0));
+  public Command getNewSetVoltsCommand(LoggedTunableNumber volts) {
+    return new InstantCommand(
+        () -> {
+          setTarget(Volts.of(volts.get()));
+        },
+        this);
   }
 
-  //
+  public Command getNewSetVoltsCommand(double i) {
+    return new InstantCommand(
+        () -> {
+          setTarget(Volts.of(i));
+        },
+        this);
+  }
+
+  public Command getStopCommand() {
+    return new InstantCommand(() -> m_HopperIO.stop(), this);
+  }
+
+  @Override
+  public void periodic() {
+    m_HopperIO.updateInputs(loggedhopper);
+  }
 }
