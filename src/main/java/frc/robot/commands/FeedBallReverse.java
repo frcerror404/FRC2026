@@ -3,23 +3,23 @@
 // import edu.wpi.first.wpilibj2.command.Command;
 // import frc.robot.subsystems.shooter.Shooter;
 
-// public class ShooterOut extends Command {
+// public class FeedBallReverse extends Command {
 
 //   private final Shooter shooter;
 
-//   public ShooterOut(Shooter shooter) {
+//   public FeedBallReverse(Shooter shooter) {
 //     this.shooter = shooter;
 //     addRequirements(shooter);
 //   }
 
 //   @Override
 //   public void initialize() {
-//     shooter.runShooter();
+//     shooter.runFeederReverse();
 //   }
 
 //   @Override
 //   public void end(boolean interrupted) {
-//     shooter.stopShooter();
+//     shooter.stopFeeder();
 //   }
 
 //   @Override

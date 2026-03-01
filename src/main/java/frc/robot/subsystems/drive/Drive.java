@@ -20,7 +20,6 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -70,7 +69,7 @@ public class Drive extends SubsystemBase {
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
   // PathPlanner config constants
-  private static final double ROBOT_MASS_KG = 74.088;
+  private static final double ROBOT_MASS_KG = 53.977;
   private static final double ROBOT_MOI = 6.883;
   private static final double WHEEL_COF = 1.2;
   private static final double LIMELIGHT_IMU_ASSIST_ALPHA = 0.001;
@@ -126,7 +125,7 @@ public class Drive extends SubsystemBase {
   LimelightTargetData limelightTargetData;
   LimelightPoseEstimator visionPoseEstimator;
   EstimationMode blue_MegaTag2;
-  PoseEstimate visionPoseEstimate = new PoseEstimate(shooterLimelight, getName(), false);
+  // PoseEstimate visionPoseEstimate = new PoseEstimate(shooterLimelight, getName(), false);
   LimelightResults shooterLimelightResults = new LimelightResults();
 
   public Drive(
@@ -136,7 +135,7 @@ public class Drive extends SubsystemBase {
       ModuleIO blModuleIO,
       ModuleIO brModuleIO) {
     this.gyroIO = gyroIO;
-    shooterLimelight = new Limelight("shooter-limelight");
+    shooterLimelight = new Limelight("limelight1");
     limelightTargetData = new LimelightTargetData(shooterLimelight);
     blue_MegaTag2 = EstimationMode.MEGATAG2;
     visionPoseEstimator = new LimelightPoseEstimator(shooterLimelight, blue_MegaTag2);
@@ -256,9 +255,9 @@ public class Drive extends SubsystemBase {
 
       // Get the vision estimate.
 
-      swervePoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
-      swervePoseEstimator.addVisionMeasurement(
-          shooterLimelightResults.getBotPose2d(), visionPoseEstimate.getTimestampSeconds());
+      // swervePoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+      // swervePoseEstimator.addVisionMeasurement(
+      // shooterLimelightResults.getBotPose2d(), visionPoseEstimate.getTimestampSeconds());
     }
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);

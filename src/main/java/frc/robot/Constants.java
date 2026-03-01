@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+  public static final boolean tuningMode = false;
+  public static boolean disableHAL = false;
 
   public static final class FieldConstants {
     public static final double FIELD_LENGTH_METERS = Units.inchesToMeters(651.2);
@@ -77,6 +79,10 @@ public final class Constants {
     public static final double APRILTAG_SIZE_METERS = Units.inchesToMeters(8.125);
     public static final double TOWER_WALL_TAG_CENTER_HEIGHT_METERS = Units.inchesToMeters(21.75);
     public static final double TRENCH_TAG_CENTER_HEIGHT_METERS = Units.inchesToMeters(35.0);
+
+    public static void disableHAL() {
+      disableHAL = true;
+    }
 
     private FieldConstants() {}
 

@@ -1,105 +1,143 @@
 package frc.robot.subsystems.shooter;
 
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.List;
+import frc.robot.util.LoggedTunableNumber;
 
 public class Shooter extends SubsystemBase {
 
-  private static final double SHOOTER_SPEED = 0.2;
-  private static final double FEEDER_SPEED = 0.2;
+  // private static final double SHOOTER_SPEED = -0.7;
+  // private static final double FEEDER_SPEED = -1.0;
+  private final ShooterIO m_ShooterIO;
+
+  ShooterIOInputsAutoLogged loggedshooter = new ShooterIOInputsAutoLogged();
 
   // Flywheel motors
-  private final TalonFX leftMotor;
-  private final TalonFX middleMotor;
-  private final TalonFX rightMotor;
-  private final List<TalonFX> shooterMotors;
+  // private final TalonFX leftMotor;
+  // private final TalonFX middleMotor;
+  // private final TalonFX rightMotor;
+  // private final List<TalonFX> shooterMotors;
 
   // Feeder motor
-  private final TalonFX feederMotor;
+  // private final TalonFX feederMotor;
 
-  private final VoltageOut voltageRequest = new VoltageOut(0);
+  // private final VoltageOut voltageRequest = new VoltageOut(0);
 
-  public Shooter(int leftID, int middleID, int rightID, int feederID) {
+  public Shooter(ShooterIO ShooterIO) {
+    m_ShooterIO = ShooterIO;
+    // leftMotor = new TalonFX(leftID);
+    // middleMotor = new TalonFX(middleID);
+    // rightMotor = new TalonFX(rightID);
+    // feederMotor = new TalonFX(feederID);
 
-    leftMotor = new TalonFX(leftID);
-    middleMotor = new TalonFX(middleID);
-    rightMotor = new TalonFX(rightID);
-    feederMotor = new TalonFX(feederID);
+    loggedshooter.angularVelocity = DegreesPerSecond.mutable(0);
+    loggedshooter.supplyCurrent = Amps.mutable(0);
+    loggedshooter.torqueCurrent = Amps.mutable(0);
+    loggedshooter.voltageSetPoint = Volts.mutable(0);
+    loggedshooter.voltage = Volts.mutable(0);
 
-    shooterMotors = List.of(leftMotor, middleMotor, rightMotor);
+    // shooterMotors = List.of(leftMotor, middleMotor, rightMotor);
 
-    configureShooterMotor(leftMotor, InvertedValue.CounterClockwise_Positive);
-    configureShooterMotor(middleMotor, InvertedValue.Clockwise_Positive);
-    configureShooterMotor(rightMotor, InvertedValue.Clockwise_Positive);
+    // configureShooterMotor(leftMotor, InvertedValue.CounterClockwise_Positive);
+    // configureShooterMotor(middleMotor, InvertedValue.Clockwise_Positive);
+    // configureShooterMotor(rightMotor, InvertedValue.Clockwise_Positive);
 
-    configureFeederMotor(feederMotor);
+    // configureFeederMotor(feederMotor);
   }
 
-  private void configureShooterMotor(TalonFX motor, InvertedValue inversion) {
+  // private void configureShooterMotor(TalonFX motor, InvertedValue inversion) {
 
-    TalonFXConfiguration config =
-        new TalonFXConfiguration()
-            .withMotorOutput(
-                new MotorOutputConfigs()
-                    .withInverted(inversion)
-                    .withNeutralMode(NeutralModeValue.Coast))
-            .withCurrentLimits(
-                new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(80)
-                    .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(40)
-                    .withSupplyCurrentLimitEnable(true));
+  //   TalonFXConfiguration config =
+  //       new TalonFXConfiguration()
+  //           .withMotorOutput(
+  //               new MotorOutputConfigs()
+  //                   .withInverted(inversion)
+  //                   .withNeutralMode(NeutralModeValue.Coast))
+  //           .withCurrentLimits(
+  //               new CurrentLimitsConfigs()
+  //                   .withStatorCurrentLimit(80)
+  //                   .withStatorCurrentLimitEnable(true)
+  //                   .withSupplyCurrentLimit(40)
+  //                   .withSupplyCurrentLimitEnable(true));
 
-    motor.getConfigurator().apply(config);
-  }
+  //   motor.getConfigurator().apply(config);
+  // }
 
-  private void configureFeederMotor(TalonFX motor) {
+  // private void configureFeederMotor(TalonFX motor) {
 
-    TalonFXConfiguration config =
-        new TalonFXConfiguration()
-            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
-            .withCurrentLimits(
-                new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(60)
-                    .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(30)
-                    .withSupplyCurrentLimitEnable(true));
+  //   TalonFXConfiguration config =
+  //       new TalonFXConfiguration()
+  //           .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
+  //           .withCurrentLimits(
+  //               new CurrentLimitsConfigs()
+  //                   .withStatorCurrentLimit(60)
+  //                   .withStatorCurrentLimitEnable(true)
+  //                   .withSupplyCurrentLimit(30)
+  //                   .withSupplyCurrentLimitEnable(true));
 
-    motor.getConfigurator().apply(config);
-  }
+  //   motor.getConfigurator().apply(config);
+  // }
 
   // Flywheel
-  public void runShooter() {
-    for (TalonFX motor : shooterMotors) {
-      motor.setControl(voltageRequest.withOutput(SHOOTER_SPEED * 12.0));
-    }
+  // public void runShooter() {
+  //   for (TalonFX motor : shooterMotors) {
+  //     motor.setControl(voltageRequest.withOutput(SHOOTER_SPEED * 12.0));
+  //   }
+  // }
+
+  public void setTarget(Voltage target) {
+    m_ShooterIO.setTarget(target);
   }
 
-  public void stopShooter() {
-    for (TalonFX motor : shooterMotors) {
-      motor.setControl(voltageRequest.withOutput(0.0));
-    }
+  public Command getNewSetVoltsCommand(LoggedTunableNumber volts) {
+    return new InstantCommand(
+        () -> {
+          setTarget(Volts.of(volts.get()));
+        },
+        this);
   }
 
-  // Feeder
-
-  public void runFeeder() {
-    feederMotor.setControl(voltageRequest.withOutput(FEEDER_SPEED * 12.0));
+  public Command getNewSetVoltsCommand(double i) {
+    return new InstantCommand(
+        () -> {
+          setTarget(Volts.of(i));
+        },
+        this);
   }
 
-  public void stopFeeder() {
-    feederMotor.setControl(voltageRequest.withOutput(0.0));
+  @Override
+  public void periodic() {
+    m_ShooterIO.updateInputs(loggedshooter);
   }
 
-  public void stopAll() {
-    stopShooter();
-    stopFeeder();
-  }
+  // public void stopShooter() {
+  //   for (TalonFX motor : shooterMotors) {
+  //     motor.setControl(voltageRequest.withOutput(0.0));
+  //   }
+  // }
+
+  // // Feeder
+
+  // public void runFeeder() {
+  //   feederMotor.setControl(voltageRequest.withOutput(-(FEEDER_SPEED * 12.0)));
+  // }
+
+  // public void runFeederReverse() {
+  //   feederMotor.setControl(voltageRequest.withOutput((FEEDER_SPEED * 12.0)));
+  // }
+
+  // public void stopFeeder() {
+  //   feederMotor.setControl(voltageRequest.withOutput(0.0));
+  // }
+
+  // public void stopAll() {
+  //   stopShooter();
+  //   stopFeeder();
+  // }
 }

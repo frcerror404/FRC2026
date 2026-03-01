@@ -16,19 +16,23 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.ClimberDown;
-import frc.robot.commands.ClimberUp;
+// import frc.robot.commands.ClimberDown;
+// import frc.robot.commands.ClimberUp;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FaceHubCommand;
+// import frc.robot.commands.FeedBall;
+// import frc.robot.commands.FeedBallReverse;
 import frc.robot.commands.HopperOff;
 import frc.robot.commands.HopperOn;
 import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
 import frc.robot.commands.IntakeStow;
-import frc.robot.commands.ShooterOut;
+import frc.robot.commands.Shoot;
+import frc.robot.commands.ShootStop;
+// import frc.robot.commands.ShooterOut;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.climber.Climber;
+// import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -38,8 +42,9 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.vision.LimelightLoggerSubsystem;
-import limelight.Limelight;
+import frc.robot.subsystems.shooter.ShooterIOTalonFX;
+import frc.robot.util.CanDef;
+import frc.robot.util.CanDef.CanBus;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -52,34 +57,39 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
 
+  private final Shooter shooter1;
+  private final Shooter shooter2;
+
+  private final Shooter shooter3;
+
   // Intake
   // (Roller ID, Pivot ID)
-  private final Intake intake = new Intake(0, 1);
-
-  // Shooter
-  private final Shooter shooter = new Shooter(8, 9, 10, 11); // temp id
+  private final Intake intake = new Intake(14, 16);
 
   // Hopper
-  private final Hopper hopper = new Hopper(1);
+  private final Hopper hopper = new Hopper(12);
   private boolean HopperOn = false;
 
   // climber
 
-  private final Climber climber = new Climber(1);
+  // private final Climber climber = new Climber(1);
 
   // Controller
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
-  private final Limelight limelight1 =
-      Constants.currentMode == Constants.Mode.REAL ? new Limelight("limelight1") : null;
-  private final LimelightLoggerSubsystem limelightLoggerSubsystem;
+  // private final Limelight limelight1 =
+  //     Constants.currentMode == Constants.Mode.REAL ? new Limelight("limelight1") : null;
+  // private final LimelightLoggerSubsystem limelightLoggerSubsystem;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    limelightLoggerSubsystem = new LimelightLoggerSubsystem(limelight1);
+    // limelightLoggerSubsystem = new LimelightLoggerSubsystem(limelight1);
+
+    //  CanDef.Builder canivoreCanBuilder = CanDef.builder().bus(CanBus.CANivore);
+    CanDef.Builder rioCanBuilder = CanDef.builder().bus(CanBus.Rio);
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -92,6 +102,11 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+
+        shooter1 = new Shooter(new ShooterIOTalonFX(rioCanBuilder.id(4).build()));
+        shooter2 = new Shooter(new ShooterIOTalonFX(rioCanBuilder.id(3).build()));
+        shooter3 = new Shooter(new ShooterIOTalonFX(rioCanBuilder.id(7).build()));
+
         break;
 
       case SIM:
@@ -103,6 +118,11 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+
+        shooter1 = null;
+        shooter2 = null;
+        shooter3 = null;
+
         break;
 
       default:
@@ -114,6 +134,11 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+
+        shooter1 = null;
+        shooter2 = null;
+        shooter3 = null;
+
         break;
     }
 
@@ -182,17 +207,19 @@ public class RobotContainer {
     operator.leftTrigger().whileTrue(new IntakeOut(intake));
     operator.a().onTrue(new IntakeDeploy(intake));
     operator.b().onTrue(new IntakeStow(intake));
-    operator.x().whileTrue(new ShooterOut(shooter));
-    operator.rightBumper().whileTrue(new ClimberUp(climber));
-    operator.leftBumper().whileTrue(new ClimberDown(climber));
+    operator.x().whileTrue(new Shoot(shooter1)).whileFalse(new ShootStop(shooter1));
+    // operator.rightBumper().whileTrue(new ClimberUp(climber));
+    // operator.leftBumper().whileTrue(new ClimberDown(climber));
 
     if (HopperOn) {
-      operator.x().toggleOnTrue(new HopperOn(hopper));
+      operator.y().toggleOnTrue(new HopperOn(hopper));
     } else {
-      operator.x().toggleOnTrue(new HopperOff(hopper));
+      operator.y().toggleOnTrue(new HopperOff(hopper));
     }
 
-    // operator.leftTrigger().whileTrue(new FeedBall(shooter)); - if we want it to be controlled
+    // driver.rightTrigger().whileTrue(new FeedBall(shooter));
+    // driver.leftTrigger().whileTrue(new FeedBallReverse(shooter));
+
     // seperaely
   }
 

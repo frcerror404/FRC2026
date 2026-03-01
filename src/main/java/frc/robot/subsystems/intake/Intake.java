@@ -17,8 +17,8 @@ public class Intake extends SubsystemBase {
 
   private static final double PIVOT_GEAR_RATIO = 50.0;
 
-  private static final double INTAKE_SPEED = 0.2;
-  private static final double OUTTAKE_SPEED = -0.2;
+  private static final double INTAKE_SPEED = 0.8;
+  private static final double OUTTAKE_SPEED = -0.8;
 
   private final TalonFX rollerMotor;
   private final TalonFX pivotMotor;
@@ -43,7 +43,7 @@ public class Intake extends SubsystemBase {
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(60)
+                    .withStatorCurrentLimit(20)
                     .withStatorCurrentLimitEnable(true)
                     .withSupplyCurrentLimit(35)
                     .withSupplyCurrentLimitEnable(true));
@@ -63,9 +63,9 @@ public class Intake extends SubsystemBase {
                     .withInverted(InvertedValue.CounterClockwise_Positive))
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(80)
+                    .withStatorCurrentLimit(20)
                     .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(40)
+                    .withSupplyCurrentLimit(10)
                     .withSupplyCurrentLimitEnable(true))
             .withFeedback(
                 new FeedbackConfigs()
