@@ -1,16 +1,13 @@
 package frc.robot.subsystems.shooterReverse;
 
-import static edu.wpi.first.units.Units.Volts;
-
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.StaticBrake;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.units.measure.Voltage;
 import frc.robot.util.CanDef;
 import frc.robot.util.PhoenixUtil;
 
@@ -18,17 +15,12 @@ public class ShooterReverseIOTalonFX implements ShooterReverseIO {
   public VoltageOut Request;
   public TalonFX Motor;
   public Slot0Configs Slot0Configs;
-
-
   public double shotSpeed;
-  public TorqueCurrentFOC shoot = new TorqueCurrentFOC(0);
-
-  private Voltage m_setPoint = Voltage.ofBaseUnits(0, Volts);
 
   public ShooterReverseIOTalonFX(CanDef canbus) {
     Motor = new TalonFX(canbus.id(), canbus.bus());
-    Request = new VoltageOut(0.0);
 
+    shooterPID();
     configureTalons();
   }
 
@@ -47,27 +39,25 @@ public class ShooterReverseIOTalonFX implements ShooterReverseIO {
   }
 
   private void shooterPID() {
-    var slot0Configs = Slot0Configs();
+    var slot0Configs = new Slot0Configs();
+    slot0Configs.kS = 0.1;
+    slot0Configs.kV = 0.12;
+    slot0Configs.kP = 0.11;
+    slot0Configs.kI = 0;
+    slot0Configs.kD = 0;
+
+    Motor.getConfigurator().apply(slot0Configs);
   }
 
   @Override
   public void updateInputs(ShooterReverseIOInputs inputs) {
-    inputs.angularVelocity.mut_replace(Motor.getVelocity().getValue());
-    inputs.voltageSetPoint.mut_replace(m_setPoint);
     inputs.voltage.mut_replace(Motor.getMotorVoltage().getValue());
     inputs.supplyCurrent.mut_replace(Motor.getSupplyCurrent().getValue());
   }
 
   @Override
-  public void setTarget(Voltage target) {
-    Request = Request.withOutput(target);
-    Motor.setControl(Request);
-    m_setPoint = target;
-  }
-
-  @Override
   public void shootFuel(double shotSpeed) {
-    shoot = new TorqueCurrentFOC(shotSpeed);
+    Motor.setControl(new VelocityVoltage(shotSpeed).withSlot(0));
   }
 
   @Override

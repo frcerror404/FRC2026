@@ -15,9 +15,14 @@ public interface IntakeIO {
     public MutVoltage voltageSetPoint;
     public MutCurrent supplyCurrent;
     public MutCurrent torqueCurrent;
+    public double intakeSpeed;
   }
 
   public void setTarget(Voltage target);
+
+  public void runIntake(double intakeSpeed);
+
+  public void runIntakeReverse(double intakeSpeed);
 
   public void updateInputs(IntakeIOInputs input);
 

@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.StaticBrake;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -15,6 +16,7 @@ import frc.robot.util.PhoenixUtil;
 public class IntakeIOTalonFX implements IntakeIO {
   public VoltageOut Request;
   public TalonFX Motor;
+  public double intakeSpeed;
 
   private Voltage m_setPoint = Voltage.ofBaseUnits(0, Volts);
 
@@ -51,6 +53,16 @@ public class IntakeIOTalonFX implements IntakeIO {
     Request = Request.withOutput(target);
     Motor.setControl(Request);
     m_setPoint = target;
+  }
+
+  @Override
+  public void runIntake(double intakeSpeed) {
+    Motor.setControl(new VelocityVoltage(intakeSpeed));
+  }
+
+  @Override
+  public void runIntakeReverse(double intakeSpeed) {
+    Motor.setControl(new VelocityVoltage(-intakeSpeed));
   }
 
   @Override

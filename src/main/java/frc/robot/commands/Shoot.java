@@ -7,7 +7,7 @@ import frc.robot.subsystems.shooterReverse.ShooterReverse;
 public class Shoot extends SequentialCommandGroup {
 
   public Shoot(ShooterReverse shooter1, Shooter shooter2, Shooter shooter3) {
-    super(shooter1.shootFuel(5.0), shooter2.shootFuel(5.0), shooter2.shootFuel(5.0));
+    super(shooter1.shootFuel(3), shooter2.shootFuel(3), shooter3.shootFuel(3));
     addRequirements(shooter1, shooter2, shooter3);
   }
 }
