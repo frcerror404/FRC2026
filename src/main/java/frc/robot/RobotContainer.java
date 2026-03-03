@@ -8,6 +8,8 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -52,6 +54,8 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.intakePivot.IntakePivot;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
+import frc.robot.subsystems.shooterReverse.ShooterReverse;
+import frc.robot.subsystems.shooterReverse.ShooterReverseIOTalonFX;
 import frc.robot.util.CanDef;
 import frc.robot.util.CanDef.CanBus;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -66,7 +70,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
 
-  private final Shooter shooter1;
+  private final ShooterReverse shooter1;
   private final Shooter shooter2;
   private final Shooter shooter3;
   private final Feeder feeder;
@@ -110,7 +114,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        shooter1 = new Shooter(new ShooterIOTalonFX(rioCanBuilder.id(4).build()));
+        shooter1 = new ShooterReverse(new ShooterReverseIOTalonFX(rioCanBuilder.id(4).build()));
         shooter2 = new Shooter(new ShooterIOTalonFX(rioCanBuilder.id(3).build()));
         shooter3 = new Shooter(new ShooterIOTalonFX(rioCanBuilder.id(7).build()));
 
@@ -245,6 +249,16 @@ public class RobotContainer {
         .whileFalse(new StopIntake(intake));
 
     // seperaely
+  }
+
+  private void registerNamedCommands() {
+    NamedCommands.registerCommand("IntakeFuel", new IntakeFuel(intake));
+    NamedCommands.registerCommand("StopIntake", new StopIntake(intake));
+    NamedCommands.registerCommand("DropIntake", new IntakeDeploy(intakePivot));
+    NamedCommands.registerCommand("FeedFuel", new FeedFuel(feeder, hopper));
+    NamedCommands.registerCommand("StopFeederHopper", new StopFeederHopper(feeder, hopper));
+    NamedCommands.registerCommand("ShootFuel", new Shoot(shooter1, shooter2, shooter3));
+    NamedCommands.registerCommand("StopShooter", new StopShooter(shooter1, shooter2, shooter3));
   }
 
   /**

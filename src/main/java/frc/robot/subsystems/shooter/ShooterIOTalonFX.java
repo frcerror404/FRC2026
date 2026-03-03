@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.StaticBrake;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -21,6 +22,7 @@ public class ShooterIOTalonFX implements ShooterIO {
   public ShooterIOTalonFX(CanDef canbus) {
     Motor = new TalonFX(canbus.id(), canbus.bus());
     Request = new VoltageOut(0.0);
+    final TorqueCurrentFOC shoot = new TorqueCurrentFOC(0);
 
     configureTalons();
   }
@@ -51,6 +53,11 @@ public class ShooterIOTalonFX implements ShooterIO {
     Request = Request.withOutput(target);
     Motor.setControl(Request);
     m_setPoint = target;
+  }
+
+  @Override
+  public void shootFuel(double speed) {
+    shoot = speed
   }
 
   @Override

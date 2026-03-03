@@ -1,4 +1,4 @@
-package frc.robot.subsystems.hopper;
+package frc.robot.subsystems.shooterReverse;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -12,13 +12,13 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.robot.util.CanDef;
 import frc.robot.util.PhoenixUtil;
 
-public class HopperIOTalonFX implements HopperIO {
+public class ShooterReverseIOTalonFX implements ShooterReverseIO {
   public VoltageOut Request;
   public TalonFX Motor;
 
   private Voltage m_setPoint = Voltage.ofBaseUnits(0, Volts);
 
-  public HopperIOTalonFX(CanDef canbus) {
+  public ShooterReverseIOTalonFX(CanDef canbus) {
     Motor = new TalonFX(canbus.id(), canbus.bus());
     Request = new VoltageOut(0.0);
 
@@ -30,16 +30,17 @@ public class HopperIOTalonFX implements HopperIO {
     cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     cfg.CurrentLimits.StatorCurrentLimit = 80.0;
     cfg.CurrentLimits.StatorCurrentLimitEnable = true;
-    cfg.CurrentLimits.SupplyCurrentLimit = 40.0;
+    cfg.CurrentLimits.SupplyCurrentLimit = 30.0;
     cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
-    cfg.Voltage.PeakForwardVoltage = 5.0;
-    cfg.Voltage.PeakReverseVoltage = 5.0;
+    cfg.Voltage.PeakForwardVoltage = 12.0;
+    cfg.Voltage.PeakReverseVoltage = 12.0;
     cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
     PhoenixUtil.tryUntilOk(5, () -> Motor.getConfigurator().apply(cfg));
   }
 
   @Override
-  public void updateInputs(HopperIOInputs inputs) {
+  public void updateInputs(ShooterReverseIOInputs inputs) {
     inputs.angularVelocity.mut_replace(Motor.getVelocity().getValue());
     inputs.voltageSetPoint.mut_replace(m_setPoint);
     inputs.voltage.mut_replace(Motor.getMotorVoltage().getValue());

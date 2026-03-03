@@ -6,7 +6,7 @@ import frc.robot.subsystems.intake.Intake;
 public class IntakeFuel extends SequentialCommandGroup {
 
   public IntakeFuel(Intake intake) {
-    super(intake.getNewSetVoltsCommand(2.0));
+    super(intake.getNewSetVoltsCommand(1.0));
     addRequirements(intake);
   }
 }
