@@ -37,11 +37,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command shootFuel(Double shotSpeed) {
-    return new InstantCommand(
-        () -> {
-          m_ShooterIO.shootFuel(shotSpeed);
-        },
-        this);
+    return new InstantCommand(() -> m_ShooterIO.shootFuel(shotSpeed), this);
   }
 
   public Command getNewSetVoltsCommand(double i) {

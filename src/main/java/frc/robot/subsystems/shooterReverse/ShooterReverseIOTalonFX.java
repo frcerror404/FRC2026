@@ -2,6 +2,7 @@ package frc.robot.subsystems.shooterReverse;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
@@ -16,6 +17,8 @@ import frc.robot.util.PhoenixUtil;
 public class ShooterReverseIOTalonFX implements ShooterReverseIO {
   public VoltageOut Request;
   public TalonFX Motor;
+  public Slot0Configs Slot0Configs;
+
 
   public double shotSpeed;
   public TorqueCurrentFOC shoot = new TorqueCurrentFOC(0);
@@ -41,6 +44,10 @@ public class ShooterReverseIOTalonFX implements ShooterReverseIO {
     cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     PhoenixUtil.tryUntilOk(5, () -> Motor.getConfigurator().apply(cfg));
+  }
+
+  private void shooterPID() {
+    var slot0Configs = Slot0Configs();
   }
 
   @Override
