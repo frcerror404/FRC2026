@@ -1,7 +1,6 @@
 package frc.robot.subsystems.shooter;
 
-import static edu.wpi.first.units.Units.Volts;
-
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -9,7 +8,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.units.measure.Voltage;
 import frc.robot.util.CanDef;
 import frc.robot.util.PhoenixUtil;
 
@@ -18,12 +16,10 @@ public class ShooterIOTalonFX implements ShooterIO {
   public TalonFX Motor;
   public double shotSpeed;
 
-  private Voltage m_setPoint = Voltage.ofBaseUnits(0, Volts);
-
   public ShooterIOTalonFX(CanDef canbus) {
     Motor = new TalonFX(canbus.id(), canbus.bus());
-    Request = new VoltageOut(0.0);
 
+    shooterPID();
     configureTalons();
   }
 
@@ -42,22 +38,24 @@ public class ShooterIOTalonFX implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.angularVelocity.mut_replace(Motor.getVelocity().getValue());
-    inputs.voltageSetPoint.mut_replace(m_setPoint);
     inputs.voltage.mut_replace(Motor.getMotorVoltage().getValue());
     inputs.supplyCurrent.mut_replace(Motor.getSupplyCurrent().getValue());
   }
 
-  @Override
-  public void setTarget(Voltage target) {
-    Request = Request.withOutput(target);
-    Motor.setControl(Request);
-    m_setPoint = target;
+  private void shooterPID() {
+    var slot0Configs = new Slot0Configs();
+    slot0Configs.kS = 0.1;
+    slot0Configs.kV = 0.12;
+    slot0Configs.kP = 0.11;
+    slot0Configs.kI = 0;
+    slot0Configs.kD = 0;
+
+    Motor.getConfigurator().apply(slot0Configs);
   }
 
   @Override
   public void shootFuel(double shotSpeed) {
-    Motor.setControl(new VelocityVoltage(shotSpeed));
+    Motor.setControl(new VelocityVoltage(shotSpeed).withSlot(0));
   }
 
   @Override
