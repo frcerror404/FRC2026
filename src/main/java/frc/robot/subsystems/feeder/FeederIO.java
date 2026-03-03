@@ -15,9 +15,12 @@ public interface FeederIO {
     public MutVoltage voltageSetPoint;
     public MutCurrent supplyCurrent;
     public MutCurrent torqueCurrent;
+    public double feederSpeed;
   }
 
   public void setTarget(Voltage target);
+
+  public void runFeeder(double feederSpeed);
 
   public void updateInputs(FeederIOInputs input);
 

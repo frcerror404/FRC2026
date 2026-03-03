@@ -37,6 +37,14 @@ public class Feeder extends SubsystemBase {
     m_FeederIO.setTarget(target);
   }
 
+  public Command runFeeder(double feederSpeed) {
+    return new InstantCommand(() -> m_FeederIO.runFeeder(feederSpeed), this);
+  }
+
+  public Command runFeederReverse(double feederSpeed) {
+    return new InstantCommand(() -> m_FeederIO.runFeeder(-feederSpeed), this);
+  }
+
   public Command getNewSetVoltsCommand(LoggedTunableNumber volts) {
     return new InstantCommand(
         () -> {

@@ -230,8 +230,8 @@ public class RobotContainer {
     operator.b().onTrue(new IntakeStow(intakePivot));
     operator
         .rightTrigger()
-        .whileTrue(new Shoot(shooter1, shooter2, shooter3))
-        .whileFalse(new StopShooter(shooter1, shooter2, shooter3));
+        .onTrue(new Shoot(shooter1, shooter2, shooter3))
+        .onFalse(new StopShooter(shooter1, shooter2, shooter3));
     operator
         .rightBumper()
         .whileTrue(new FeedFuel(feeder, hopper))

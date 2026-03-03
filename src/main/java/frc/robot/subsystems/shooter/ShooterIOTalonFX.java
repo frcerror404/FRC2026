@@ -4,7 +4,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.StaticBrake;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -17,7 +17,6 @@ public class ShooterIOTalonFX implements ShooterIO {
   public VoltageOut Request;
   public TalonFX Motor;
   public double shotSpeed;
-  public TorqueCurrentFOC shoot = new TorqueCurrentFOC(0);
 
   private Voltage m_setPoint = Voltage.ofBaseUnits(0, Volts);
 
@@ -37,7 +36,7 @@ public class ShooterIOTalonFX implements ShooterIO {
     cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
     cfg.Voltage.PeakForwardVoltage = 12.0;
     cfg.Voltage.PeakReverseVoltage = 12.0;
-    cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    cfg.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     PhoenixUtil.tryUntilOk(5, () -> Motor.getConfigurator().apply(cfg));
   }
 
@@ -58,7 +57,7 @@ public class ShooterIOTalonFX implements ShooterIO {
 
   @Override
   public void shootFuel(double shotSpeed) {
-    shoot = new TorqueCurrentFOC(shotSpeed);
+    Motor.setControl(new VelocityVoltage(shotSpeed));
   }
 
   @Override
