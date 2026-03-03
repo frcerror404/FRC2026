@@ -16,13 +16,14 @@ import frc.robot.util.PhoenixUtil;
 public class ShooterIOTalonFX implements ShooterIO {
   public VoltageOut Request;
   public TalonFX Motor;
+  public double shotSpeed;
+  public TorqueCurrentFOC shoot = new TorqueCurrentFOC(0);
 
   private Voltage m_setPoint = Voltage.ofBaseUnits(0, Volts);
 
   public ShooterIOTalonFX(CanDef canbus) {
     Motor = new TalonFX(canbus.id(), canbus.bus());
     Request = new VoltageOut(0.0);
-    final TorqueCurrentFOC shoot = new TorqueCurrentFOC(0);
 
     configureTalons();
   }
@@ -56,8 +57,8 @@ public class ShooterIOTalonFX implements ShooterIO {
   }
 
   @Override
-  public void shootFuel(double speed) {
-    shoot = speed
+  public void shootFuel(double shotSpeed) {
+    shoot = new TorqueCurrentFOC(shotSpeed);
   }
 
   @Override
