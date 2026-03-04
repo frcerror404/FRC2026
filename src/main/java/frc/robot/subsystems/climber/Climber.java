@@ -1,56 +1,36 @@
 package frc.robot.subsystems.climber;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.configs.*;
-import com.ctre.phoenix6.controls.*;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.*;
-import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
+  private final ClimberIO m_ClimberIO;
 
-  private static final double CLIMBER_UP_SPEED = 0.2;
-  private static final double CLIMBER_DOWN_SPEED = -0.2;
+  ClimberIOInputsAutoLogged loggedclimber = new ClimberIOInputsAutoLogged();
 
-  private final TalonFX climberMotor;
-
-  private final VoltageOut rollerRequest = new VoltageOut(0);
-  private final MotionMagicVoltage pivotRequest = new MotionMagicVoltage(0);
-
-  // CAN IDs
-  public Climber(int climberID) {
-    climberMotor = new TalonFX(climberID);
-
-    configureClimber();
+  public Climber(ClimberIO climberIO) {
+    m_ClimberIO = climberIO;
+    loggedclimber.angularVelocity = DegreesPerSecond.mutable(0);
+    loggedclimber.supplyCurrent = Amps.mutable(0);
+    loggedclimber.torqueCurrent = Amps.mutable(0);
+    loggedclimber.voltage = Volts.mutable(0);
   }
 
-  private void configureClimber() {
-    TalonFXConfiguration config =
-        new TalonFXConfiguration()
-            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
-            .withCurrentLimits(
-                new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(60)
-                    .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(35)
-                    .withSupplyCurrentLimitEnable(true));
-
-    climberMotor.getConfigurator().apply(config);
+  public Command runClimber(double climberSpeed) {
+    return new InstantCommand(() -> m_ClimberIO.runClimber(climberSpeed), this);
   }
 
-  // Climber Up
-  public void climberUp() {
-    climberMotor.setControl(new DutyCycleOut(CLIMBER_UP_SPEED));
+  public Command getStopCommand() {
+    return new InstantCommand(() -> m_ClimberIO.stop(), this);
   }
 
-  // Climber Down
-  public void climberDown() {
-    climberMotor.setControl(new DutyCycleOut(CLIMBER_DOWN_SPEED));
-  }
-
-  public void stop() {
-    climberMotor.setControl(new DutyCycleOut(0.0));
+  @Override
+  public void periodic() {
+    m_ClimberIO.updateInputs(loggedclimber);
   }
 }

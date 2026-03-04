@@ -1,23 +1,24 @@
-package frc.robot.subsystems.shooter;
+package frc.robot.subsystems.climber;
 
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutCurrent;
 import edu.wpi.first.units.measure.MutVoltage;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface ShooterIO {
+public interface ClimberIO {
 
   @AutoLog
-  public static class ShooterIOInputs {
+  public static class ClimberIOInputs {
+    public MutAngularVelocity angularVelocity;
     public MutVoltage voltage;
     public MutCurrent supplyCurrent;
     public MutCurrent torqueCurrent;
-    public MutAngularVelocity velocity;
+    public double hopperSpeed;
   }
 
-  public void shootFuel(double shotSpeed);
+  public void runClimber(double climberSpeed);
 
-  public void updateInputs(ShooterIOInputs input);
+  public void updateInputs(ClimberIOInputs input);
 
   public void stop();
 }

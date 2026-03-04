@@ -1,6 +1,5 @@
-package frc.robot.subsystems.shooterReverse;
+package frc.robot.subsystems.climber;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -10,15 +9,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.robot.util.CanDef;
 import frc.robot.util.PhoenixUtil;
 
-public class ShooterReverseIOTalonFX implements ShooterReverseIO {
+public class ClimberIOTalonFX implements ClimberIO {
   public TalonFX Motor;
-  public Slot0Configs Slot0Configs;
-  public double shotSpeed;
+  public double climberSpeed;
 
-  public ShooterReverseIOTalonFX(CanDef canbus) {
+  public ClimberIOTalonFX(CanDef canbus) {
     Motor = new TalonFX(canbus.id(), canbus.bus());
 
-    shooterPID();
     configureTalons();
   }
 
@@ -27,37 +24,25 @@ public class ShooterReverseIOTalonFX implements ShooterReverseIO {
     cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     cfg.CurrentLimits.StatorCurrentLimit = 80.0;
     cfg.CurrentLimits.StatorCurrentLimitEnable = true;
-    cfg.CurrentLimits.SupplyCurrentLimit = 30.0;
+    cfg.CurrentLimits.SupplyCurrentLimit = 40.0;
     cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
     cfg.Voltage.PeakForwardVoltage = 12.0;
     cfg.Voltage.PeakReverseVoltage = -12.0;
     cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
     PhoenixUtil.tryUntilOk(5, () -> Motor.getConfigurator().apply(cfg));
   }
 
-  private void shooterPID() {
-    var slot0Configs = new Slot0Configs();
-    slot0Configs.kS = 0.1;
-    slot0Configs.kV = 0.12;
-    slot0Configs.kP = 0.11;
-    slot0Configs.kI = 0;
-    slot0Configs.kD = 0;
-
-    Motor.getConfigurator().apply(slot0Configs);
-  }
-
   @Override
-  public void updateInputs(ShooterReverseIOInputs inputs) {
-    inputs.velocity.mut_replace(Motor.getVelocity().getValue());
+  public void updateInputs(ClimberIO.ClimberIOInputs inputs) {
+    inputs.angularVelocity.mut_replace(Motor.getVelocity().getValue());
     inputs.voltage.mut_replace(Motor.getMotorVoltage().getValue());
     inputs.supplyCurrent.mut_replace(Motor.getSupplyCurrent().getValue());
     inputs.torqueCurrent.mut_replace(Motor.getTorqueCurrent().getValue());
   }
 
   @Override
-  public void shootFuel(double shotSpeed) {
-    Motor.setControl(new VelocityVoltage(shotSpeed).withSlot(0));
+  public void runClimber(double climberSpeed) {
+    Motor.setControl(new VelocityVoltage(climberSpeed));
   }
 
   @Override

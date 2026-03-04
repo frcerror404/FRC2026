@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -33,7 +32,6 @@ import frc.robot.commands.StopHopper;
 import frc.robot.commands.StopIntake;
 import frc.robot.commands.StopShooter;
 import frc.robot.generated.TunerConstants;
-// import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -53,7 +51,6 @@ import frc.robot.subsystems.shooterReverse.ShooterReverse;
 import frc.robot.subsystems.shooterReverse.ShooterReverseIOTalonFX;
 import frc.robot.util.CanDef;
 import frc.robot.util.CanDef.CanBus;
-import limelight.Limelight;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -72,7 +69,7 @@ public class RobotContainer {
   private final Feeder feeder;
   private final Hopper hopper;
   private final Intake intake;
-  private final Limelight shooterLimelight;
+  // private final Limelight shooterLimelight;
   private final IntakePivot intakePivot = new IntakePivot(16);
   // private final Climber climber = new Climber(1);
 
@@ -83,7 +80,7 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  private boolean m_TeleopInitialized = false;
+  // private boolean m_TeleopInitialized = false;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -109,7 +106,7 @@ public class RobotContainer {
         feeder = new Feeder(new FeederIOTalonFX(rioCanBuilder.id(6).build()));
         intake = new Intake(new IntakeIOTalonFX(rioCanBuilder.id(14).build()));
         hopper = new Hopper(new HopperIOTalonFX(rioCanBuilder.id(12).build()));
-        shooterLimelight = new Limelight("limelight-shooter");
+        // shooterLimelight = new Limelight("limelight-shooter");
 
         break;
 
@@ -129,7 +126,7 @@ public class RobotContainer {
         feeder = null;
         intake = null;
         hopper = null;
-        shooterLimelight = null;
+        // shooterLimelight = null;
 
         break;
 
@@ -150,7 +147,7 @@ public class RobotContainer {
         feeder = null;
         intake = null;
         hopper = null;
-        shooterLimelight = null;
+        // shooterLimelight = null;
 
         break;
     }
@@ -250,16 +247,16 @@ public class RobotContainer {
     NamedCommands.registerCommand("StopShooter", new StopShooter(shooter1, shooter2, shooter3));
   }
 
-  public void teleopInit() {
-    if (!this.m_TeleopInitialized) {
-      // Only want to initialize starting position once (if teleop multiple times dont reset pose
-      // again)
-      //   vision.updateStartingPosition();
-      // Turn on updating odometry based on Apriltags
-      //   vision.enableUpdateOdometryBasedOnApriltags();
-      m_TeleopInitialized = true;
-      SignalLogger.setPath("/media/sda1/");
-      SignalLogger.start();
-    }
-  }
+  // public void teleopInit() {
+  //   if (!this.m_TeleopInitialized) {
+  //     // Only want to initialize starting position once (if teleop multiple times dont reset pose
+  //     // again)
+  //     //   vision.updateStartingPosition();
+  //     // Turn on updating odometry based on Apriltags
+  //     //   vision.enableUpdateOdometryBasedOnApriltags();
+  //     m_TeleopInitialized = true;
+  //     SignalLogger.setPath("/media/sda1/");
+  //     SignalLogger.start();
+  //   }
+  // }
 }
