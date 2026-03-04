@@ -31,15 +31,9 @@ public class ShooterIOTalonFX implements ShooterIO {
     cfg.CurrentLimits.SupplyCurrentLimit = 30.0;
     cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
     cfg.Voltage.PeakForwardVoltage = 12.0;
-    cfg.Voltage.PeakReverseVoltage = 12.0;
+    cfg.Voltage.PeakReverseVoltage = -12.0;
     cfg.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     PhoenixUtil.tryUntilOk(5, () -> Motor.getConfigurator().apply(cfg));
-  }
-
-  @Override
-  public void updateInputs(ShooterIOInputs inputs) {
-    inputs.voltage.mut_replace(Motor.getMotorVoltage().getValue());
-    inputs.supplyCurrent.mut_replace(Motor.getSupplyCurrent().getValue());
   }
 
   private void shooterPID() {
@@ -51,6 +45,14 @@ public class ShooterIOTalonFX implements ShooterIO {
     slot0Configs.kD = 0;
 
     Motor.getConfigurator().apply(slot0Configs);
+  }
+
+  @Override
+  public void updateInputs(ShooterIOInputs inputs) {
+    inputs.velocity.mut_replace(Motor.getVelocity().getValue());
+    inputs.voltage.mut_replace(Motor.getMotorVoltage().getValue());
+    inputs.supplyCurrent.mut_replace(Motor.getSupplyCurrent().getValue());
+    inputs.torqueCurrent.mut_replace(Motor.getTorqueCurrent().getValue());
   }
 
   @Override

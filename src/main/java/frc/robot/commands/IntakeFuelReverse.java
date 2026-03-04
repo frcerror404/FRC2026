@@ -6,7 +6,7 @@ import frc.robot.subsystems.intake.Intake;
 public class IntakeFuelReverse extends SequentialCommandGroup {
 
   public IntakeFuelReverse(Intake intake) {
-    super(intake.runIntake(3));
+    super(intake.runIntake(-3));
     addRequirements(intake);
   }
 }
