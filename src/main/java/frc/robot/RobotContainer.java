@@ -7,9 +7,7 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -18,11 +16,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+// import frc.robot.commands.ClimberDown;
+// import frc.robot.commands.ClimberUp;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FaceHubCommand;
 import frc.robot.commands.FeedFuel;
 import frc.robot.commands.FeedFuelReverse;
 import frc.robot.commands.HopperToFeeder;
+// import frc.robot.commands.FeedBall;
+// import frc.robot.commands.FeedBallReverse;
 import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.IntakeFuel;
 import frc.robot.commands.IntakeFuelReverse;
@@ -32,6 +34,7 @@ import frc.robot.commands.StopFeederHopper;
 import frc.robot.commands.StopHopper;
 import frc.robot.commands.StopIntake;
 import frc.robot.commands.StopShooter;
+// import frc.robot.commands.ShooterOut;
 import frc.robot.generated.TunerConstants;
 // import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
@@ -53,7 +56,6 @@ import frc.robot.subsystems.shooterReverse.ShooterReverse;
 import frc.robot.subsystems.shooterReverse.ShooterReverseIOTalonFX;
 import frc.robot.util.CanDef;
 import frc.robot.util.CanDef.CanBus;
-import limelight.Limelight;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -63,30 +65,37 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-
   // Subsystems
   private final Drive drive;
+
   private final ShooterReverse shooter1;
   private final Shooter shooter2;
   private final Shooter shooter3;
   private final Feeder feeder;
   private final Hopper hopper;
   private final Intake intake;
-  private final Limelight shooterLimelight;
-  private final IntakePivot intakePivot = new IntakePivot(16);
+
+  // Intake
+  // (Roller ID, Pivot ID)
+  private final IntakePivot intakePivot; // = new IntakePivot(16);
+
+  // climber
+
   // private final Climber climber = new Climber(1);
 
   // Controller
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
+  // private final Limelight limelight1 =
+  //     Constants.currentMode == Constants.Mode.REAL ? new Limelight("limelight1") : null;
+  // private final LimelightLoggerSubsystem limelightLoggerSubsystem;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  private boolean m_TeleopInitialized = false;
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    // limelightLoggerSubsystem = new LimelightLoggerSubsystem(limelight1);
 
     //  CanDef.Builder canivoreCanBuilder = CanDef.builder().bus(CanBus.CANivore);
     CanDef.Builder rioCanBuilder = CanDef.builder().bus(CanBus.Rio);
@@ -106,11 +115,12 @@ public class RobotContainer {
         shooter1 = new ShooterReverse(new ShooterReverseIOTalonFX(rioCanBuilder.id(4).build()));
         shooter2 = new Shooter(new ShooterIOTalonFX(rioCanBuilder.id(3).build()));
         shooter3 = new Shooter(new ShooterIOTalonFX(rioCanBuilder.id(7).build()));
+
         feeder = new Feeder(new FeederIOTalonFX(rioCanBuilder.id(6).build()));
         intake = new Intake(new IntakeIOTalonFX(rioCanBuilder.id(14).build()));
         hopper = new Hopper(new HopperIOTalonFX(rioCanBuilder.id(12).build()));
-        shooterLimelight = new Limelight("limelight-shooter");
 
+        intakePivot = new IntakePivot(new IntakePivotIOTalonFx(rioCanBuilder.id(16).build()));
         break;
 
       case SIM:
@@ -126,10 +136,10 @@ public class RobotContainer {
         shooter1 = null;
         shooter2 = null;
         shooter3 = null;
+
         feeder = null;
         intake = null;
         hopper = null;
-        shooterLimelight = null;
 
         break;
 
@@ -150,12 +160,9 @@ public class RobotContainer {
         feeder = null;
         intake = null;
         hopper = null;
-        shooterLimelight = null;
 
         break;
     }
-
-    registerNamedCommands();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -230,6 +237,18 @@ public class RobotContainer {
         .whileFalse(new StopFeederHopper(feeder, hopper));
   }
 
+  //   // Register commands for auto builder
+  //   private void registerNamedCommands() {
+  //     NamedCommands.registerCommand("IntakeFuel", new IntakeFuel(intake));
+  //     NamedCommands.registerCommand("StopIntake", new StopIntake(intake));
+  //     NamedCommands.registerCommand("DropIntake", new IntakeDeploy(intakePivot));
+  //     NamedCommands.registerCommand("FeedFuel", new FeedFuel(feeder, hopper));
+  //     NamedCommands.registerCommand("StopFeederHopper", new StopFeederHopper(feeder, hopper));
+  //     NamedCommands.registerCommand("ShootFuel", new Shoot(shooter1, shooter2, shooter3));
+  //     NamedCommands.registerCommand("StopShooter", new StopShooter(shooter1, shooter2,
+  // shooter3));
+  //   }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -239,27 +258,7 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
-  // Register commands for auto builder
-  private void registerNamedCommands() {
-    NamedCommands.registerCommand("IntakeFuel", new IntakeFuel(intake));
-    NamedCommands.registerCommand("StopIntake", new StopIntake(intake));
-    NamedCommands.registerCommand("DropIntake", new IntakeDeploy(intakePivot));
-    NamedCommands.registerCommand("FeedFuel", new FeedFuel(feeder, hopper));
-    NamedCommands.registerCommand("StopFeederHopper", new StopFeederHopper(feeder, hopper));
-    NamedCommands.registerCommand("ShootFuel", new Shoot(shooter1, shooter2, shooter3));
-    NamedCommands.registerCommand("StopShooter", new StopShooter(shooter1, shooter2, shooter3));
-  }
-
-  public void teleopInit() {
-    if (!this.m_TeleopInitialized) {
-      // Only want to initialize starting position once (if teleop multiple times dont reset pose
-      // again)
-      //   vision.updateStartingPosition();
-      // Turn on updating odometry based on Apriltags
-      //   vision.enableUpdateOdometryBasedOnApriltags();
-      m_TeleopInitialized = true;
-      SignalLogger.setPath("/media/sda1/");
-      SignalLogger.start();
-    }
+  public void setIntakeBrakeMode(boolean Enabled) {
+    this.intakePivot.setBrakeMode(Enabled);
   }
 }

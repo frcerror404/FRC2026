@@ -2,7 +2,7 @@ package frc.robot.subsystems.feeder;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.StaticBrake;
-import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -25,8 +25,8 @@ public class FeederIOTalonFX implements FeederIO {
     cfg.CurrentLimits.StatorCurrentLimitEnable = true;
     cfg.CurrentLimits.SupplyCurrentLimit = 40.0;
     cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
-    cfg.Voltage.PeakForwardVoltage = 12.0;
-    cfg.Voltage.PeakReverseVoltage = -12.0;
+    // cfg.Voltage.PeakForwardVoltage = 12.0;
+    // cfg.Voltage.PeakReverseVoltage = 12.0;
     cfg.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     PhoenixUtil.tryUntilOk(5, () -> Motor.getConfigurator().apply(cfg));
   }
@@ -41,7 +41,7 @@ public class FeederIOTalonFX implements FeederIO {
 
   @Override
   public void runFeeder(double feederSpeed) {
-    Motor.setControl(new VelocityVoltage(feederSpeed));
+    Motor.setControl(new VoltageOut(feederSpeed * 12.0));
   }
 
   @Override
