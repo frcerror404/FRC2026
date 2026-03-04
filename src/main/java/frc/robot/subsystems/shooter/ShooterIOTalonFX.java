@@ -3,7 +3,6 @@ package frc.robot.subsystems.shooter;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.StaticBrake;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -26,12 +25,12 @@ public class ShooterIOTalonFX implements ShooterIO {
   private void configureTalons() {
     TalonFXConfiguration cfg = new TalonFXConfiguration();
     cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    cfg.CurrentLimits.StatorCurrentLimit = 80.0;
-    cfg.CurrentLimits.StatorCurrentLimitEnable = true;
-    cfg.CurrentLimits.SupplyCurrentLimit = 30.0;
-    cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
-    cfg.Voltage.PeakForwardVoltage = 12.0;
-    cfg.Voltage.PeakReverseVoltage = 12.0;
+    // cfg.CurrentLimits.StatorCurrentLimit = 80.0;
+    // cfg.CurrentLimits.StatorCurrentLimitEnable = true;
+    // cfg.CurrentLimits.SupplyCurrentLimit = 30.0;
+    // cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
+    // cfg.Voltage.PeakForwardVoltage = 12.0;
+    // cfg.Voltage.PeakReverseVoltage = 12.0;
     cfg.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     PhoenixUtil.tryUntilOk(5, () -> Motor.getConfigurator().apply(cfg));
   }
@@ -55,7 +54,7 @@ public class ShooterIOTalonFX implements ShooterIO {
 
   @Override
   public void shootFuel(double shotSpeed) {
-    Motor.setControl(new VelocityVoltage(shotSpeed).withSlot(0));
+    Motor.setControl(new VoltageOut(shotSpeed));
   }
 
   @Override

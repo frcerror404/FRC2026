@@ -13,7 +13,7 @@ public class IntakePivot extends SubsystemBase {
 
   // Change once robot is finished
   private static final double PIVOT_INTAKE_ANGLE = -10;
-  private static final double PIVOT_STOW_ANGLE = 90;
+  private static final double PIVOT_STOW_ANGLE = 115;
 
   private static final double PIVOT_GEAR_RATIO = 50.0;
 

@@ -30,12 +30,12 @@ public class FeederIOTalonFX implements FeederIO {
   private void configureTalons() {
     TalonFXConfiguration cfg = new TalonFXConfiguration();
     cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    cfg.CurrentLimits.StatorCurrentLimit = 80.0;
-    cfg.CurrentLimits.StatorCurrentLimitEnable = true;
-    cfg.CurrentLimits.SupplyCurrentLimit = 40.0;
-    cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
-    cfg.Voltage.PeakForwardVoltage = 12.0;
-    cfg.Voltage.PeakReverseVoltage = 12.0;
+    // cfg.CurrentLimits.StatorCurrentLimit = 80.0;
+    // cfg.CurrentLimits.StatorCurrentLimitEnable = true;
+    // cfg.CurrentLimits.SupplyCurrentLimit = 40.0;
+    // cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
+    // cfg.Voltage.PeakForwardVoltage = -12.0;
+    // cfg.Voltage.PeakReverseVoltage = 12.0;
     cfg.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     PhoenixUtil.tryUntilOk(5, () -> Motor.getConfigurator().apply(cfg));
   }

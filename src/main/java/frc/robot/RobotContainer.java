@@ -241,7 +241,7 @@ public class RobotContainer {
         .whileTrue(new FeedFuelReverse(feeder, hopper))
         .whileFalse(new StopFeederHopper(feeder, hopper));
 
-    driver.rightTrigger().whileTrue(new IntakeFuel(intake)).whileFalse(new StopIntake(intake));
+    driver.rightTrigger().onTrue(new IntakeFuel(intake)).onFalse(new StopIntake(intake));
     driver
         .leftTrigger()
         .whileTrue(new IntakeFuelReverse(intake))
