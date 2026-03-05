@@ -66,6 +66,16 @@ public class Vision extends SubsystemBase {
     return inputs[cameraIndex].latestTargetObservation.tx();
   }
 
+  /** Returns whether the camera has a valid target. */
+  public boolean hasTarget(int cameraIndex) {
+    return inputs[cameraIndex].hasTarget;
+  }
+
+  /** Returns the primary tag ID visible to the camera, or -1 if none. */
+  public int getPrimaryTagId(int cameraIndex) {
+    return inputs[cameraIndex].primaryTagId;
+  }
+
   @Override
   public void periodic() {
     for (int i = 0; i < io.length; i++) {

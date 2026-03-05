@@ -21,7 +21,6 @@ import frc.robot.commands.AgitateIntake;
 // import frc.robot.commands.ClimberDown;
 // import frc.robot.commands.ClimberUp;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.FaceHubCommand;
 import frc.robot.commands.FeedFuel;
 import frc.robot.commands.FeedFuelReverse;
 // import frc.robot.commands.FeedBall;
@@ -30,6 +29,7 @@ import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.IntakeFuel;
 import frc.robot.commands.IntakeFuelReverse;
 import frc.robot.commands.IntakeStow;
+import frc.robot.commands.LimelightAimCommand;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootAndFeed;
 import frc.robot.commands.StopFeederHopper;
@@ -57,6 +57,10 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.shooterReverse.ShooterReverse;
 import frc.robot.subsystems.shooterReverse.ShooterReverseIOTalonFX;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.CanDef;
 import frc.robot.util.CanDef.CanBus;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -77,6 +81,8 @@ public class RobotContainer {
   private final Feeder feeder;
   private final Hopper hopper;
   private final Intake intake;
+
+  private final Vision vision;
 
   // Intake
   // (Roller ID, Pivot ID)
@@ -123,6 +129,11 @@ public class RobotContainer {
         feeder = new Feeder(new FeederIOTalonFX(rioCanBuilder.id(6).build()));
         intake = new Intake(new IntakeIOTalonFX(rioCanBuilder.id(14).build()));
         hopper = new Hopper(new HopperIOTalonFX(rioCanBuilder.id(12).build()));
+
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOLimelight(VisionConstants.shooterLimelightName, drive::getRotation));
         break;
 
       case SIM:
@@ -142,6 +153,8 @@ public class RobotContainer {
         feeder = null;
         intake = null;
         hopper = null;
+
+        vision = null;
 
         break;
 
@@ -163,10 +176,14 @@ public class RobotContainer {
         intake = null;
         hopper = null;
 
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+
         break;
     }
 
     // Set up auto routines
+
+    registerNamedCommands();
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
@@ -189,7 +206,6 @@ public class RobotContainer {
     configureButtonBindings();
 
     // Register Commands for Auton
-    registerNamedCommands();
   }
 
   /**
@@ -224,13 +240,12 @@ public class RobotContainer {
         .whileTrue(new IntakeFuelReverse(intake))
         .whileFalse(new StopIntake(intake));
 
-    // Operator - Face Hub
+    // Operator - Limelight Aim at Hub (tags 25/26 blue, 9/10 red)
     operator
         .start()
-        .toggleOnTrue(
-            new FaceHubCommand(drive, () -> -driver.getLeftY(), () -> -driver.getLeftX()));
-    // operator.start().whileTrue(DriveCommands.joystickDriveAtAngle(drive, () ->
-    // -driver.getLeftY(), () -> -driver.getLeftX(), () -> Rotation2d.kZero));
+        .whileTrue(
+            new LimelightAimCommand(
+                drive, vision, () -> -driver.getLeftY(), () -> -driver.getLeftX()));
 
     // Operator - Deploy Intake
     operator.a().onTrue(new IntakeDeploy(intakePivot));

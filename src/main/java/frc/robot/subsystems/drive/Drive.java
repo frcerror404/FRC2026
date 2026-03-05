@@ -45,14 +45,8 @@ import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
-import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.IntStream;
-import limelight.*;
-import limelight.Limelight.*;
-import limelight.networktables.*;
-import limelight.networktables.LimelightPoseEstimator.EstimationMode;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -72,13 +66,6 @@ public class Drive extends SubsystemBase {
   private static final double ROBOT_MASS_KG = 53.977;
   private static final double ROBOT_MOI = 6.883;
   private static final double WHEEL_COF = 1.2;
-  private static final double LIMELIGHT_IMU_ASSIST_ALPHA = 0.001;
-  private static final LimelightSettings.ImuMode LIMELIGHT_IMU_MODE_DISABLED =
-      LimelightSettings.ImuMode.SyncInternalImu;
-  private static final LimelightSettings.ImuMode LIMELIGHT_IMU_MODE_ENABLED =
-      LimelightSettings.ImuMode.InternalImuExternalAssist;
-  private static final List<Double> LIMELIGHT_MT2_FIDUCIAL_IDS =
-      IntStream.rangeClosed(1, 32).mapToObj((int id) -> (double) id).toList();
 
   private static final RobotConfig PP_CONFIG =
       new RobotConfig(
@@ -118,12 +105,6 @@ public class Drive extends SubsystemBase {
   Pose3d cameraOffset =
       new Pose3d(
           Inches.of(1.375), Inches.of(-3.053), Inches.of(-25.687202), new Rotation3d(0, -105, 0));
-  Limelight shooterLimelight;
-  LimelightTargetData limelightTargetData;
-  LimelightPoseEstimator visionPoseEstimator;
-  EstimationMode blue_MegaTag2;
-  // PoseEstimate visionPoseEstimate = new PoseEstimate(shooterLimelight, getName(), false);
-  LimelightResults shooterLimelightResults = new LimelightResults();
 
   public Drive(
       GyroIO gyroIO,
@@ -132,12 +113,7 @@ public class Drive extends SubsystemBase {
       ModuleIO blModuleIO,
       ModuleIO brModuleIO) {
     this.gyroIO = gyroIO;
-    shooterLimelight = new Limelight("limelight1");
-    limelightTargetData = new LimelightTargetData(shooterLimelight);
-    blue_MegaTag2 = EstimationMode.MEGATAG2;
-    visionPoseEstimator = new LimelightPoseEstimator(shooterLimelight, blue_MegaTag2);
 
-    configureLimelight();
     modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
     modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
     modules[2] = new Module(blModuleIO, 2, TunerConstants.BackLeft);
@@ -237,25 +213,6 @@ public class Drive extends SubsystemBase {
       swervePoseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
 
-    if (Constants.currentMode == Mode.REAL) {
-      // Required for megatag2
-      shooterLimelight
-          .getSettings()
-          .withRobotOrientation(
-              new Orientation3d(
-                  gyroInputs.yawPitchRollPosition,
-                  new AngularVelocity3d(
-                      RadiansPerSecond.of(0),
-                      RadiansPerSecond.of(0),
-                      RadiansPerSecond.of(gyroInputs.yawVelocityRadPerSec))))
-          .save();
-
-      // Get the vision estimate.
-
-      // swervePoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
-      // swervePoseEstimator.addVisionMeasurement(
-      // shooterLimelightResults.getBotPose2d(), visionPoseEstimate.getTimestampSeconds());
-    }
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
   }
@@ -364,28 +321,6 @@ public class Drive extends SubsystemBase {
     return output;
   }
 
-  double limelight_aim_proportional() {
-    // kP (constant of proportionality)
-    // this is a hand-tuned number that determines the aggressiveness of our proportional control
-    // loop
-    // if it is too high, the robot will oscillate around.
-    // if it is too low, the robot will never reach its target
-    // if the robot never turns in the correct direction, kP should be inverted.
-    double kP = .035;
-
-    // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of
-    // your limelight 3 feed, tx should return roughly 31 degrees.
-    double targetingAngularVelocity = limelightTargetData.getHorizontalOffset() * kP;
-
-    // convert to radians per second for our drive method
-    targetingAngularVelocity *= Drive.getMaxAngularSpeedRadPerSec();
-
-    // invert since tx is positive when the target is to the right of the crosshair
-    targetingAngularVelocity *= -1.0;
-
-    return targetingAngularVelocity;
-  }
-
   /** Returns the current odometry pose. */
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
@@ -429,15 +364,5 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
-  }
-
-  private void configureLimelight() {
-    shooterLimelight
-        .getSettings()
-        .withCameraOffset(cameraOffset)
-        .withImuAssistAlpha(LIMELIGHT_IMU_ASSIST_ALPHA)
-        .withAprilTagIdFilter(LIMELIGHT_MT2_FIDUCIAL_IDS)
-        .withImuMode(LIMELIGHT_IMU_MODE_ENABLED)
-        .save();
   }
 }

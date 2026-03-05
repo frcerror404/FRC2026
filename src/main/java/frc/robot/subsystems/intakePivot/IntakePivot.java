@@ -14,7 +14,7 @@ public class IntakePivot extends SubsystemBase {
   // Change once robot is finished
   private static final double PIVOT_INTAKE_ANGLE = -15;
   private static final double PIVOT_STOW_ANGLE = 115;
-  private static final double PIVOT_AGITATE_ANGLE = 20;
+  private static final double PIVOT_AGITATE_ANGLE = 35;
 
   private static final double PIVOT_GEAR_RATIO = 50.0;
 
@@ -39,7 +39,7 @@ public class IntakePivot extends SubsystemBase {
         new TalonFXConfiguration()
             .withMotorOutput(
                 new MotorOutputConfigs()
-                    .withNeutralMode(NeutralModeValue.Brake)
+                    .withNeutralMode(NeutralModeValue.Coast)
                     .withInverted(InvertedValue.CounterClockwise_Positive))
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
