@@ -64,7 +64,7 @@ public class LimelightAimCommand extends Command {
     double omega = 0.0;
     if (shouldAim) {
       double tx = vision.getTargetX(0).getDegrees();
-      omega = -aimController.calculate(tx);
+      omega = aimController.calculate(tx);
     }
 
     Translation2d linearVelocity =

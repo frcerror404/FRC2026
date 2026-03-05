@@ -243,7 +243,7 @@ public class RobotContainer {
     // Operator - Limelight Aim at Hub (tags 25/26 blue, 9/10 red)
     operator
         .start()
-        .whileTrue(
+        .toggleOnTrue(
             new LimelightAimCommand(
                 drive, vision, () -> -driver.getLeftY(), () -> -driver.getLeftX()));
 
