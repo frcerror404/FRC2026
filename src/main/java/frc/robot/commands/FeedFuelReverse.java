@@ -7,7 +7,7 @@ import frc.robot.subsystems.hopper.Hopper;
 public class FeedFuelReverse extends SequentialCommandGroup {
 
   public FeedFuelReverse(Feeder feeder, Hopper hopper) {
-    super(feeder.runFeeder(-3.0), hopper.runHopper(-3.0));
+    super(feeder.getNewSetVoltsCommand(-6), hopper.getNewSetVoltsCommand(-6.0));
     addRequirements(feeder, hopper);
   }
 }

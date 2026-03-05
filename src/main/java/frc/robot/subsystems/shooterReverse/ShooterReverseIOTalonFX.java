@@ -3,7 +3,7 @@ package frc.robot.subsystems.shooterReverse;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.StaticBrake;
-import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -11,6 +11,7 @@ import frc.robot.util.CanDef;
 import frc.robot.util.PhoenixUtil;
 
 public class ShooterReverseIOTalonFX implements ShooterReverseIO {
+  public VoltageOut Request;
   public TalonFX Motor;
   public Slot0Configs Slot0Configs;
   public double shotSpeed;
@@ -25,12 +26,12 @@ public class ShooterReverseIOTalonFX implements ShooterReverseIO {
   private void configureTalons() {
     TalonFXConfiguration cfg = new TalonFXConfiguration();
     cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    cfg.CurrentLimits.StatorCurrentLimit = 80.0;
-    cfg.CurrentLimits.StatorCurrentLimitEnable = true;
-    cfg.CurrentLimits.SupplyCurrentLimit = 30.0;
-    cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
-    cfg.Voltage.PeakForwardVoltage = 12.0;
-    cfg.Voltage.PeakReverseVoltage = -12.0;
+    // cfg.CurrentLimits.StatorCurrentLimit = 80.0;
+    // cfg.CurrentLimits.StatorCurrentLimitEnable = true;
+    // cfg.CurrentLimits.SupplyCurrentLimit = 30.0;
+    // cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
+    // cfg.Voltage.PeakForwardVoltage = 12.0;
+    // cfg.Voltage.PeakReverseVoltage = 12.0;
     cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     PhoenixUtil.tryUntilOk(5, () -> Motor.getConfigurator().apply(cfg));
@@ -49,15 +50,13 @@ public class ShooterReverseIOTalonFX implements ShooterReverseIO {
 
   @Override
   public void updateInputs(ShooterReverseIOInputs inputs) {
-    inputs.velocity.mut_replace(Motor.getVelocity().getValue());
     inputs.voltage.mut_replace(Motor.getMotorVoltage().getValue());
     inputs.supplyCurrent.mut_replace(Motor.getSupplyCurrent().getValue());
-    inputs.torqueCurrent.mut_replace(Motor.getTorqueCurrent().getValue());
   }
 
   @Override
   public void shootFuel(double shotSpeed) {
-    Motor.setControl(new VelocityVoltage(shotSpeed).withSlot(0));
+    Motor.setControl(new VoltageOut(shotSpeed));
   }
 
   @Override
