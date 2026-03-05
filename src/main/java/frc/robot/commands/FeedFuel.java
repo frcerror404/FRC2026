@@ -7,7 +7,7 @@ import frc.robot.subsystems.hopper.Hopper;
 public class FeedFuel extends SequentialCommandGroup {
 
   public FeedFuel(Feeder feeder, Hopper hopper) {
-    super(feeder.getNewSetVoltsCommand(5), hopper.getNewSetVoltsCommand(5.0));
+    super(feeder.getNewSetVoltsCommand(7), hopper.getNewSetVoltsCommand(7.0));
     addRequirements(feeder, hopper);
   }
 }

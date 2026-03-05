@@ -14,7 +14,8 @@ import frc.robot.subsystems.vision.Vision;
 
 public class AlignToHub extends Command {
 
-  private final AprilTagFieldLayout layout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
+  private final AprilTagFields Default = AprilTagFields.kDefaultField;
+  private final AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(Default);
   private final Drive drive;
   private final Vision vision;
 
@@ -22,7 +23,7 @@ public class AlignToHub extends Command {
     this.drive = drive;
     this.vision = vision;
 
-    addRequirements(drive);
+    addRequirements(drive, vision);
   }
 
   @Override

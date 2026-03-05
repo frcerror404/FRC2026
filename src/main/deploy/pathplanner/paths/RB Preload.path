@@ -3,34 +3,38 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.4702169811320753,
-        "y": 1.6853018867924527
+        "x": 3.43822641509434,
+        "y": 1.577745283018868
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3092893462015,
-        "y": 1.493984620672399
+        "x": 2.719315263908701,
+        "y": 1.803081312410842
       },
       "isLocked": false,
-      "linkedName": "RB Prelaod Pose"
+      "linkedName": "RB Start Pose"
     },
     {
       "anchor": {
-        "x": 0.4845566037735849,
-        "y": 0.6262830188679243
+        "x": 1.7359771754636228,
+        "y": 4.028530670470756
       },
       "prevControl": {
-        "x": 0.2346039308685146,
-        "y": 0.6311473078818447
+        "x": 1.645406562054208,
+        "y": 3.0322539229671905
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "HPB Pose"
+      "linkedName": "RB Prelaod Pose"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 0,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 1,
       "rotationDegrees": 0.0
     }
   ],
@@ -47,13 +51,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -0.545657593415688
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Blue paths",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 48.81407483429034
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

@@ -16,40 +16,31 @@
     },
     {
       "anchor": {
-        "x": 2.46194339623036,
-        "y": 6.905933962260703
+        "x": 1.7359771754636228,
+        "y": 4.028530670470756
       },
       "prevControl": {
-        "x": 2.620917746795563,
-        "y": 7.098877362931397
+        "x": 1.6583452211126959,
+        "y": 4.85660485021398
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "LB Preload Pose"
+      "linkedName": "RB Prelaod Pose"
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [],
-  "pointTowardsZones": [
+  "rotationTargets": [
     {
-      "fieldPosition": {
-        "x": 4.61,
-        "y": 4.01
-      },
-      "rotationOffset": 0.0,
-      "minWaypointRelativePos": 0.15,
-      "maxWaypointRelativePos": 1.0,
-      "name": "Point Towards Zone"
-    }
-  ],
-  "eventMarkers": [
+      "waypointRelativePos": 0.0,
+      "rotationDegrees": 0.0
+    },
     {
-      "name": "LB shoot preload",
       "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": null
+      "rotationDegrees": 0.0
     }
   ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -60,10 +51,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -56.30993247402023
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Blue paths",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.45471886159753455

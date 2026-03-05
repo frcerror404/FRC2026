@@ -7,31 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LB Preload shot"
+            "pathName": "LB Preload"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Shoot Preload"
+            "name": "ShootAndFeed"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "LB Preload to Depot"
+            "waitTime": 3.0
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "intake depot"
+            "name": "StopShootAndFeed"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Blue autos",
+  "folder": null,
   "choreoAuto": false
 }

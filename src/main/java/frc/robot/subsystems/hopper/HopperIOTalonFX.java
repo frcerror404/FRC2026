@@ -19,7 +19,7 @@ public class HopperIOTalonFX implements HopperIO {
   private Voltage m_setPoint = Voltage.ofBaseUnits(0, Volts);
 
   public HopperIOTalonFX(CanDef canbus) {
-    Motor = new TalonFX(canbus.id(), canbus.bus());
+    Motor = new TalonFX(canbus.id());
     Request = new VoltageOut(0.0);
 
     configureTalons();

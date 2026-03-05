@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.StaticBrake;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -21,7 +20,7 @@ public class FeederIOTalonFX implements FeederIO {
   private Voltage m_setPoint = Voltage.ofBaseUnits(0, Volts);
 
   public FeederIOTalonFX(CanDef canbus) {
-    Motor = new TalonFX(canbus.id(), canbus.bus());
+    Motor = new TalonFX(canbus.id());
     Request = new VoltageOut(0.0);
 
     configureTalons();
@@ -50,7 +49,7 @@ public class FeederIOTalonFX implements FeederIO {
 
   @Override
   public void runFeeder(double feederSpeed) {
-    Motor.setControl(new VelocityVoltage(feederSpeed));
+    Motor.setControl(new VoltageOut(feederSpeed));
   }
 
   @Override

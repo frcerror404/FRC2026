@@ -17,7 +17,7 @@ public class ShooterReverseIOTalonFX implements ShooterReverseIO {
   public double shotSpeed;
 
   public ShooterReverseIOTalonFX(CanDef canbus) {
-    Motor = new TalonFX(canbus.id(), canbus.bus());
+    Motor = new TalonFX(canbus.id());
 
     shooterPID();
     configureTalons();

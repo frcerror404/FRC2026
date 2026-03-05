@@ -117,10 +117,7 @@ public class Drive extends SubsystemBase {
 
   Pose3d cameraOffset =
       new Pose3d(
-          Inches.of(1.375),
-          Inches.of(-3.053),
-          Inches.of(-25.687202),
-          new Rotation3d(0, 18.100000, 0));
+          Inches.of(1.375), Inches.of(-3.053), Inches.of(-25.687202), new Rotation3d(0, -105, 0));
   Limelight shooterLimelight;
   LimelightTargetData limelightTargetData;
   LimelightPoseEstimator visionPoseEstimator;

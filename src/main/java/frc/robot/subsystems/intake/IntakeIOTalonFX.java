@@ -20,7 +20,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   private Voltage m_setPoint = Voltage.ofBaseUnits(0, Volts);
 
   public IntakeIOTalonFX(CanDef canbus) {
-    Motor = new TalonFX(canbus.id(), canbus.bus());
+    Motor = new TalonFX(canbus.id());
     Request = new VoltageOut(0.0);
 
     configureTalons();

@@ -7,37 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RB shoot preload"
+            "pathName": "MB Preload"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "RB shoot preload"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RB Preload to HP"
+            "name": "ShootAndFeed"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 5.0
+            "waitTime": 3.0
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "RB HP to Preload"
+            "name": "StopShootAndFeed"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Blue autos",
+  "folder": null,
   "choreoAuto": false
 }

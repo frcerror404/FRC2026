@@ -25,23 +25,16 @@ public class VisionConstants {
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
   // Camera names, must match names configured on coprocessor
-  //   public static String camera0Name = "BR_Camera";
-  public static String camera1Name = "BL_Camera";
+  public static String camera = "shooter-limelight";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
-  public static Transform3d robotToCamera0 =
+  public static Transform3d robotToLimelight =
       new Transform3d(
-          .194,
-          .274,
-          0.225,
-          new Rotation3d(0.0, Units.degreesToRadians(-10), Units.degreesToRadians(-7.5)));
-  public static Transform3d robotToCamera1 =
-      new Transform3d(
-          0.194,
-          -0.274,
-          0.225,
-          new Rotation3d(0.0, Units.degreesToRadians(-10), Units.degreesToRadians(-7.5)));
+          Units.inchesToMeters(1.375),
+          Units.inchesToMeters(-3.053),
+          Units.inchesToMeters(-25.687202),
+          new Rotation3d(0.0, Units.degreesToRadians(-105), 0.0));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
@@ -54,11 +47,7 @@ public class VisionConstants {
 
   // Standard deviation multipliers for each camera
   // (Adjust to trust some cameras more than others)
-  public static double[] cameraStdDevFactors =
-      new double[] {
-        // 0.65, // Camera 0
-        0.65 // Camera 1
-      };
+  public static double[] cameraStdDevFactors = new double[] {1};
 
   // Multipliers to apply for MegaTag 2 observations
   public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve

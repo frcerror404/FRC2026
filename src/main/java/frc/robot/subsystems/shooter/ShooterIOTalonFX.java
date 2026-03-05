@@ -16,7 +16,7 @@ public class ShooterIOTalonFX implements ShooterIO {
   public double shotSpeed;
 
   public ShooterIOTalonFX(CanDef canbus) {
-    Motor = new TalonFX(canbus.id(), canbus.bus());
+    Motor = new TalonFX(canbus.id());
 
     shooterPID();
     configureTalons();
