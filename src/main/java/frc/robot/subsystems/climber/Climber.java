@@ -51,6 +51,6 @@ public class Climber extends SubsystemBase {
   }
 
   public void stop() {
-    climberMotor.setControl(new DutyCycleOut(0.0));
+    climberMotor.setControl(new StaticBrake());
   }
 }

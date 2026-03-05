@@ -14,6 +14,7 @@ public class IntakePivot extends SubsystemBase {
   // Change once robot is finished
   private static final double PIVOT_INTAKE_ANGLE = -10;
   private static final double PIVOT_STOW_ANGLE = 115;
+  private static final double PIVOT_AGITATE_ANGLE = 20;
 
   private static final double PIVOT_GEAR_RATIO = 50.0;
 
@@ -66,6 +67,10 @@ public class IntakePivot extends SubsystemBase {
 
   public void pivotToIntake() {
     pivotMotor.setControl(pivotRequest.withPosition(Degrees.of(PIVOT_INTAKE_ANGLE)));
+  }
+
+  public void agitateIntake() {
+    pivotMotor.setControl(pivotRequest.withPosition(Degrees.of(PIVOT_AGITATE_ANGLE)));
   }
 
   public void pivotToStow() {

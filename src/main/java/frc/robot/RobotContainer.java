@@ -17,13 +17,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AgitateIntake;
 // import frc.robot.commands.ClimberDown;
 // import frc.robot.commands.ClimberUp;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FaceHubCommand;
 import frc.robot.commands.FeedFuel;
 import frc.robot.commands.FeedFuelReverse;
-import frc.robot.commands.HopperToFeeder;
 // import frc.robot.commands.FeedBall;
 // import frc.robot.commands.FeedBallReverse;
 import frc.robot.commands.IntakeDeploy;
@@ -31,12 +31,14 @@ import frc.robot.commands.IntakeFuel;
 import frc.robot.commands.IntakeFuelReverse;
 import frc.robot.commands.IntakeStow;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.ShootAndFeed;
 import frc.robot.commands.StopFeederHopper;
-import frc.robot.commands.StopHopper;
 import frc.robot.commands.StopIntake;
+import frc.robot.commands.StopShootAndFeed;
 import frc.robot.commands.StopShooter;
 // import frc.robot.commands.ShooterOut;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climber.Climber;
 // import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -79,6 +81,7 @@ public class RobotContainer {
   // Intake
   // (Roller ID, Pivot ID)
   private final IntakePivot intakePivot = new IntakePivot(16);
+  private final Climber climber = new Climber(60);
 
   // climber
 
@@ -184,6 +187,9 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    // Register Commands for Auton
+    registerNamedCommands();
   }
 
   /**
@@ -198,19 +204,9 @@ public class RobotContainer {
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
 
-    // Lock to 0° when A button is held
+    // Reset 0
     driver
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> Rotation2d.kZero));
-
-    // Switch to X pattern when X button is pressed
-    driver.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
-    // Reset gyro to 0° when B button is pressed
-    driver
-        .b()
+        .start()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -219,45 +215,59 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    operator
-        .start()
-        .toggleOnTrue(
-            new FaceHubCommand(drive, () -> -driver.getLeftY(), () -> -driver.getLeftX()));
-
-    // operator.rightTrigger().whileTrue(new IntakeIn(intake));
-    operator.leftTrigger().whileTrue(new HopperToFeeder(hopper)).whileFalse(new StopHopper(hopper));
-    operator.a().onTrue(new IntakeDeploy(intakePivot));
-    operator.b().onTrue(new IntakeStow(intakePivot));
-    operator
-        .rightTrigger()
-        .onTrue(new Shoot(shooter1, shooter2, shooter3))
-        .onFalse(new StopShooter(shooter1, shooter2, shooter3));
-    operator
-        .rightBumper()
-        .whileTrue(new FeedFuel(feeder, hopper))
-        .whileFalse(new StopFeederHopper(feeder, hopper));
-    operator
-        .leftBumper()
-        .whileTrue(new FeedFuelReverse(feeder, hopper))
-        .whileFalse(new StopFeederHopper(feeder, hopper));
-
+    // Driver - Run Intake
     driver.rightTrigger().onTrue(new IntakeFuel(intake)).onFalse(new StopIntake(intake));
+
+    // Driver - Reverse Intake
     driver
         .leftTrigger()
         .whileTrue(new IntakeFuelReverse(intake))
         .whileFalse(new StopIntake(intake));
 
-    // seperaely
+    // Operator - Face Hub
+    operator
+        .start()
+        .toggleOnTrue(
+            new FaceHubCommand(drive, () -> -driver.getLeftY(), () -> -driver.getLeftX()));
+    // operator.start().whileTrue(DriveCommands.joystickDriveAtAngle(drive, () ->
+    // -driver.getLeftY(), () -> -driver.getLeftX(), () -> Rotation2d.kZero));
+
+    // Operator - Deploy Intake
+    operator.a().onTrue(new IntakeDeploy(intakePivot));
+
+    // Operator - Agitate Intake
+    operator.b().onTrue(new AgitateIntake(intakePivot)).onFalse(new IntakeDeploy(intakePivot));
+
+    // Operator - Stow Intake
+    operator.x().onTrue(new IntakeStow(intakePivot));
+
+    // Operator - Shoot Fuel
+    operator
+        .leftTrigger()
+        .onTrue(new Shoot(shooter1, shooter2, shooter3))
+        .onFalse(new StopShooter(shooter1, shooter2, shooter3));
+
+    // Operator - Feed Fuel
+    operator
+        .rightTrigger()
+        .whileTrue(new FeedFuel(feeder, hopper))
+        .whileFalse(new StopFeederHopper(feeder, hopper));
+
+    // Operator - Reverse Feeder
+    operator
+        .rightBumper()
+        .whileTrue(new FeedFuelReverse(feeder, hopper))
+        .whileFalse(new StopFeederHopper(feeder, hopper));
   }
 
   private void registerNamedCommands() {
-    NamedCommands.registerCommand("IntakeFuel", new IntakeFuel(intake));
+    NamedCommands.registerCommand("StartIntake", new IntakeFuel(intake));
     NamedCommands.registerCommand("StopIntake", new StopIntake(intake));
-    NamedCommands.registerCommand("DropIntake", new IntakeDeploy(intakePivot));
-    NamedCommands.registerCommand("FeedFuel", new FeedFuel(feeder, hopper));
-    NamedCommands.registerCommand("StopFeederHopper", new StopFeederHopper(feeder, hopper));
-    NamedCommands.registerCommand("ShootFuel", new Shoot(shooter1, shooter2, shooter3));
-    NamedCommands.registerCommand("StopShooter", new StopShooter(shooter1, shooter2, shooter3));
+    NamedCommands.registerCommand("DeployIntake", new IntakeDeploy(intakePivot));
+    NamedCommands.registerCommand(
+        "ShootAndFeed", new ShootAndFeed(hopper, feeder, shooter1, shooter2, shooter3));
+    NamedCommands.registerCommand(
+        "StopShootAndFeed", new StopShootAndFeed(hopper, feeder, shooter1, shooter2, shooter3));
   }
 
   /**
