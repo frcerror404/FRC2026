@@ -112,7 +112,8 @@ public class Vision extends SubsystemBase {
       for (var observation : inputs[cameraIndex].poseObservations) {
         // Check whether to reject pose
         boolean rejectPose =
-            observation.tagCount() == 0 // Must have at least one tag
+            rejectPose(observation) // Check subclass rejection rules
+                || observation.tagCount() == 0 // Must have at least one tag
                 || (observation.tagCount() == 1
                     && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
                 || Math.abs(observation.pose().getZ())
@@ -152,7 +153,7 @@ public class Vision extends SubsystemBase {
         }
 
         // Send vision observation
-        consumer.accept(
+        addVisionMeasurement(
             observation.pose().toPose2d(),
             observation.timestamp(),
             VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));

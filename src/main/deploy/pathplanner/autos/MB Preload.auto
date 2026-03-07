@@ -13,7 +13,50 @@
         {
           "type": "named",
           "data": {
+            "name": "AimAtHub"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "ShootAndFeed"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DeployIntake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AgitateIntake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "DeployIntake"
+                }
+              }
+            ]
           }
         },
         {

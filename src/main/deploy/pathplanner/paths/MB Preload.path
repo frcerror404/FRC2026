@@ -12,20 +12,20 @@
         "y": 4.028530670470756
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "MB Start"
     },
     {
       "anchor": {
-        "x": 1.710099857346647,
-        "y": 4.416690442225392
+        "x": 1.667679245283019,
+        "y": 3.8281603773584907
       },
       "prevControl": {
-        "x": 2.710484980001738,
-        "y": 4.416690442225392
+        "x": 2.66806436793811,
+        "y": 3.8281603773584907
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "RB Prelaod Pose"
+      "linkedName": "RB Preload Pose"
     }
   ],
   "rotationTargets": [

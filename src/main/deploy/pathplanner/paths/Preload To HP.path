@@ -3,34 +3,34 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.710099857346647,
-        "y": 4.416690442225392
+        "x": 1.667679245283019,
+        "y": 3.8281603773584907
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.835763195435092,
-        "y": 2.5664621968616266
+        "x": 2.048264150943396,
+        "y": 2.3885566037735844
       },
       "isLocked": false,
-      "linkedName": "RB Prelaod Pose"
+      "linkedName": "RB Preload Pose"
     },
     {
       "anchor": {
-        "x": -0.2306990014283306,
-        "y": 0.45746077033217714
+        "x": 0.6252075471698115,
+        "y": 0.651103773584905
       },
       "prevControl": {
-        "x": 1.1666761768883602,
-        "y": 0.3539514978642728
+        "x": 1.3450094339622642,
+        "y": 0.9406792452830188
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "HPB Pose"
+      "linkedName": "Outpost"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.0,
+      "waypointRelativePos": 0.35589743589743034,
       "rotationDegrees": 0.0
     },
     {

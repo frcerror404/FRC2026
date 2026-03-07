@@ -57,6 +57,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.shooterReverse.ShooterReverse;
 import frc.robot.subsystems.shooterReverse.ShooterReverseIOTalonFX;
+import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -102,6 +103,7 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+  private boolean slowMode = false;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -131,7 +133,8 @@ public class RobotContainer {
         hopper = new Hopper(new HopperIOTalonFX(rioCanBuilder.id(12).build()));
 
         vision =
-            new Vision(
+            new AprilTagVision(
+                drive::setPose,
                 drive::addVisionMeasurement,
                 new VisionIOLimelight(VisionConstants.shooterLimelightName, drive::getRotation));
         break;
@@ -216,9 +219,15 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
+    // D-pad left toggles slow mode (30% speed)
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
+            drive,
+            () -> -driver.getLeftY() * (slowMode ? 0.3 : 1.0),
+            () -> -driver.getLeftX() * (slowMode ? 0.3 : 1.0),
+            () -> -driver.getRightX() * (slowMode ? 0.3 : 1.0)));
+
+    driver.povLeft().onTrue(Commands.runOnce(() -> slowMode = !slowMode));
 
     // Reset 0
     driver
@@ -241,9 +250,9 @@ public class RobotContainer {
         .whileFalse(new StopIntake(intake));
 
     // Operator - Limelight Aim at Hub (tags 25/26 blue, 9/10 red)
-    operator
-        .start()
-        .toggleOnTrue(
+    driver
+        .a()
+        .whileTrue(
             new LimelightAimCommand(
                 drive, vision, () -> -driver.getLeftY(), () -> -driver.getLeftX()));
 
@@ -251,7 +260,7 @@ public class RobotContainer {
     operator.a().onTrue(new IntakeDeploy(intakePivot));
 
     // Operator - Agitate Intake
-    operator.b().onTrue(new AgitateIntake(intakePivot)).onFalse(new IntakeDeploy(intakePivot));
+    operator.b().onTrue(new AgitateIntake(intakePivot));
 
     // Operator - Stow Intake
     operator.x().onTrue(new IntakeStow(intakePivot));
@@ -278,7 +287,12 @@ public class RobotContainer {
   private void registerNamedCommands() {
     NamedCommands.registerCommand("StartIntake", new IntakeFuel(intake));
     NamedCommands.registerCommand("StopIntake", new StopIntake(intake));
+    NamedCommands.registerCommand("AgitateIntake", new AgitateIntake(intakePivot));
     NamedCommands.registerCommand("DeployIntake", new IntakeDeploy(intakePivot));
+    NamedCommands.registerCommand("StowIntake", new IntakeStow(intakePivot));
+    NamedCommands.registerCommand(
+        "AimAtHub",
+        new LimelightAimCommand(drive, vision, () -> -driver.getLeftY(), () -> -driver.getLeftX()));
     NamedCommands.registerCommand(
         "ShootAndFeed", new ShootAndFeed(hopper, feeder, shooter1, shooter2, shooter3));
     NamedCommands.registerCommand(

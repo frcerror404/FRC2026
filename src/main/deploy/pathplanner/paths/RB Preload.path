@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 1.710099857346647,
-        "y": 4.416690442225392
+        "x": 1.667679245283019,
+        "y": 3.8281603773584907
       },
       "prevControl": {
-        "x": 1.6195292439372322,
-        "y": 3.4204136947218267
+        "x": 1.577108631873604,
+        "y": 2.831883629854925
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "RB Prelaod Pose"
+      "linkedName": "RB Preload Pose"
     }
   ],
   "rotationTargets": [

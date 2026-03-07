@@ -2,8 +2,10 @@ package frc.robot.subsystems.vision;
 
 import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
 
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -69,12 +71,12 @@ public class AprilTagVision extends Vision {
     super.periodic();
   }
 
-  // @Override
-  // public void addVisionMeasurement(Pose2d pose, double timestamp, Vector<N3> fill) {
-  //   // tell system apriltag was used
-  //   updateTags();
-  //   super.addVisionMeasurement(pose, timestamp, fill);
-  // }
+  @Override
+  public void addVisionMeasurement(Pose2d pose, double timestamp, Vector<N3> fill) {
+    // tell system apriltag was used
+    updateTags();
+    super.addVisionMeasurement(pose, timestamp, fill);
+  }
 
   /** Tells system an autonomous path was executed */
   public void updateAutonomous() {

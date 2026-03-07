@@ -12,20 +12,20 @@
         "y": 6.31096811899946
       },
       "isLocked": false,
-      "linkedName": "Start Pose"
+      "linkedName": "LB Start Pose"
     },
     {
       "anchor": {
-        "x": 1.710099857346647,
-        "y": 4.416690442225392
+        "x": 1.667679245283019,
+        "y": 3.8281603773584907
       },
       "prevControl": {
-        "x": 1.63246790299572,
-        "y": 5.244764621968616
+        "x": 1.590047290932092,
+        "y": 4.656234557101714
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "RB Prelaod Pose"
+      "linkedName": "RB Preload Pose"
     }
   ],
   "rotationTargets": [

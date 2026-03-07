@@ -11,15 +11,64 @@
           }
         },
         {
-          "type": "named",
+          "type": "sequential",
           "data": {
-            "name": "ShootAndFeed"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AimAtHub"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootAndFeed"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "DeployIntake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AgitateIntake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "StowIntake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "StopShootAndFeed"
+                }
+              }
+            ]
           }
         },
         {
@@ -29,15 +78,64 @@
           }
         },
         {
-          "type": "named",
+          "type": "sequential",
           "data": {
-            "name": "ShootAndFeed"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AimAtHub"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootAndFeed"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "DeployIntake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AgitateIntake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "StowIntake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "StopShootAndFeed"
+                }
+              }
+            ]
           }
         },
         {
@@ -49,7 +147,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 2.5
           }
         },
         {
@@ -59,15 +157,70 @@
           }
         },
         {
-          "type": "wait",
+          "type": "sequential",
           "data": {
-            "waitTime": 2.0
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AimAtHub"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootAndFeed"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "DeployIntake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AgitateIntake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "StowIntake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "StopShootAndFeed"
+                }
+              }
+            ]
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Blue Autos",
+  "folder": null,
   "choreoAuto": false
 }

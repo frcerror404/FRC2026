@@ -23,7 +23,7 @@ public class LimelightAimCommand extends Command {
   private static final double DEADBAND = 0.1;
 
   // Tune these gains on the robot
-  private static final double AIM_KP = 0.1;
+  private static final double AIM_KP = 0.5;
   private static final double AIM_KI = 0.0;
   private static final double AIM_KD = 0.005;
 
