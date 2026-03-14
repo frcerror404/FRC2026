@@ -15,6 +15,7 @@ import frc.robot.util.PhoenixUtil;
 public class HopperIOTalonFX implements HopperIO {
   public VoltageOut Request;
   public TalonFX Motor;
+  public double hopperSpeed;
 
   private Voltage m_setPoint = Voltage.ofBaseUnits(0, Volts);
 
@@ -47,10 +48,8 @@ public class HopperIOTalonFX implements HopperIO {
   }
 
   @Override
-  public void setTarget(Voltage target) {
-    Request = Request.withOutput(target);
-    Motor.setControl(Request);
-    m_setPoint = target;
+  public void runHopper(double hopperSpeed) {
+    Motor.setControl(new VoltageOut(hopperSpeed));
   }
 
   @Override
