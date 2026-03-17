@@ -1,8 +1,11 @@
 package frc.robot.subsystems.shooter;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.StaticBrake;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -13,32 +16,44 @@ import frc.robot.util.PhoenixUtil;
 public class ShooterIOTalonFX implements ShooterIO {
   public VoltageOut Request;
   public TalonFX Motor;
+  public TalonFX Motor2;
+  public Slot0Configs Slot0Configs;
+  public MotorOutputConfigs motorOutputConfigs;
+  public CurrentLimitsConfigs limitConfigs;
   public double shotSpeed;
+  public boolean isReverse;
 
   public ShooterIOTalonFX(CanDef canbus) {
     Motor = new TalonFX(canbus.id());
+    Motor2 = new TalonFX(canbus.id());
 
     shooterPID();
     configureTalons();
   }
 
   private void configureTalons() {
-    TalonFXConfiguration cfg = new TalonFXConfiguration();
-    cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    // cfg.CurrentLimits.StatorCurrentLimit = 80.0;
-    // cfg.CurrentLimits.StatorCurrentLimitEnable = true;
-    // cfg.CurrentLimits.SupplyCurrentLimit = 30.0;
-    // cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
-    // cfg.Voltage.PeakForwardVoltage = 12.0;
-    // cfg.Voltage.PeakReverseVoltage = 12.0;
-    cfg.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    PhoenixUtil.tryUntilOk(5, () -> Motor.getConfigurator().apply(cfg));
-  }
+    limitConfigs = new CurrentLimitsConfigs();
+    motorOutputConfigs = new MotorOutputConfigs();
+    var reverseOutputsConfigs = new MotorOutputConfigs();
 
-  @Override
-  public void updateInputs(ShooterIOInputs inputs) {
-    inputs.voltage.mut_replace(Motor.getMotorVoltage().getValue());
-    inputs.supplyCurrent.mut_replace(Motor.getSupplyCurrent().getValue());
+    reverseOutputsConfigs.withInverted(InvertedValue.Clockwise_Positive);
+
+    limitConfigs.StatorCurrentLimit = 20;
+    limitConfigs.StatorCurrentLimitEnable = true;
+
+    motorOutputConfigs.withInverted(InvertedValue.CounterClockwise_Positive);
+    motorOutputConfigs.withNeutralMode(NeutralModeValue.Brake);
+
+    final TalonFXConfiguration commonConfigs =
+        new TalonFXConfiguration()
+            .withMotorOutput(motorOutputConfigs)
+            .withCurrentLimits(limitConfigs);
+
+    final TalonFXConfiguration reverseConfigs =
+        commonConfigs.clone().withMotorOutput(reverseOutputsConfigs);
+
+    PhoenixUtil.tryUntilOk(5, () -> Motor.getConfigurator().apply(commonConfigs));
+    PhoenixUtil.tryUntilOk(5, () -> Motor2.getConfigurator().apply(reverseConfigs));
   }
 
   private void shooterPID() {
@@ -53,8 +68,18 @@ public class ShooterIOTalonFX implements ShooterIO {
   }
 
   @Override
-  public void shootFuel(double shotSpeed) {
-    Motor.setControl(new VoltageOut(shotSpeed));
+  public void updateInputs(ShooterIOInputs inputs) {
+    inputs.voltage.mut_replace(Motor.getMotorVoltage().getValue());
+    inputs.supplyCurrent.mut_replace(Motor.getSupplyCurrent().getValue());
+  }
+
+  @Override
+  public void shootFuel(double shotSpeed, boolean isReverse) {
+    if (isReverse) {
+      Motor.setControl(new VelocityVoltage(shotSpeed).withSlot(0).withEnableFOC(true));
+    } else {
+      Motor2.setControl(new VelocityVoltage(shotSpeed).withSlot(0).withEnableFOC(true));
+    }
   }
 
   @Override

@@ -19,8 +19,8 @@ public class Shooter extends SubsystemBase {
     loggedshooter.voltage = Volts.mutable(0);
   }
 
-  public Command shootFuel(double shotSpeed) {
-    return new InstantCommand(() -> m_ShooterIO.shootFuel(shotSpeed), this);
+  public Command shootFuel(double shotSpeed, boolean isReverse) {
+    return new InstantCommand(() -> m_ShooterIO.shootFuel(shotSpeed, isReverse), this);
   }
 
   public Command getStopCommand() {

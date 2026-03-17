@@ -22,13 +22,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AgitateIntake;
-// import frc.robot.commands.ClimberDown;
-// import frc.robot.commands.ClimberUp;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedFuel;
 import frc.robot.commands.FeedFuelReverse;
-// import frc.robot.commands.FeedBall;
-// import frc.robot.commands.FeedBallReverse;
 import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.IntakeFuel;
 import frc.robot.commands.IntakeFuelReverse;
@@ -40,10 +36,7 @@ import frc.robot.commands.StopFeederHopper;
 import frc.robot.commands.StopIntake;
 import frc.robot.commands.StopShootAndFeed;
 import frc.robot.commands.StopShooter;
-// import frc.robot.commands.ShooterOut;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.climber.Climber;
-// import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -59,8 +52,6 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.intakePivot.IntakePivot;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
-import frc.robot.subsystems.shooterReverse.ShooterReverse;
-import frc.robot.subsystems.shooterReverse.ShooterReverseIOTalonFX;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -80,19 +71,22 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
 
-  private final ShooterReverse shooter1;
+  private final Shooter shooter1;
   private final Shooter shooter2;
   private final Shooter shooter3;
-  private final Feeder feeder;
+  private final Shooter shooter4;
+  private final Feeder feeder1;
+  private final Feeder feeder2;
   private final Hopper hopper;
-  private final Intake intake;
+  private final Intake intake1;
+  private final Intake intake2;
 
   private final Vision vision;
 
   // Intake
   // (Roller ID, Pivot ID)
   private final IntakePivot intakePivot = new IntakePivot(16);
-  private final Climber climber = new Climber(60);
+  //   private final Climber climber = new Climber(60);
 
   // CANdle
   private final CANdle candle = new CANdle(50, "2026 Swerve"); // climber
@@ -129,12 +123,15 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        shooter1 = new ShooterReverse(new ShooterReverseIOTalonFX(rioCanBuilder.id(4).build()));
+        shooter1 = new Shooter(new ShooterIOTalonFX(rioCanBuilder.id(4).build()));
         shooter2 = new Shooter(new ShooterIOTalonFX(rioCanBuilder.id(3).build()));
         shooter3 = new Shooter(new ShooterIOTalonFX(rioCanBuilder.id(7).build()));
+        shooter4 = new Shooter(new ShooterIOTalonFX(rioCanBuilder.id(9).build()));
 
-        feeder = new Feeder(new FeederIOTalonFX(rioCanBuilder.id(6).build()));
-        intake = new Intake(new IntakeIOTalonFX(rioCanBuilder.id(14).build()));
+        feeder1 = new Feeder(new FeederIOTalonFX(rioCanBuilder.id(6).build()));
+        feeder2 = new Feeder(new FeederIOTalonFX(rioCanBuilder.id(11).build()));
+        intake1 = new Intake(new IntakeIOTalonFX(rioCanBuilder.id(14).build()));
+        intake2 = new Intake(new IntakeIOTalonFX(rioCanBuilder.id(15).build()));
         hopper = new Hopper(new HopperIOTalonFX(rioCanBuilder.id(12).build()));
 
         vision =
@@ -157,9 +154,12 @@ public class RobotContainer {
         shooter1 = null;
         shooter2 = null;
         shooter3 = null;
+        shooter4 = null;
 
-        feeder = null;
-        intake = null;
+        feeder1 = null;
+        feeder2 = null;
+        intake1 = null;
+        intake2 = null;
         hopper = null;
 
         vision = null;
@@ -179,9 +179,12 @@ public class RobotContainer {
         shooter1 = null;
         shooter2 = null;
         shooter3 = null;
+        shooter4 = null;
 
-        feeder = null;
-        intake = null;
+        feeder1 = null;
+        feeder2 = null;
+        intake1 = null;
+        intake2 = null;
         hopper = null;
 
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
@@ -250,13 +253,16 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // Driver - Run Intake
-    driver.rightTrigger().onTrue(new IntakeFuel(intake)).onFalse(new StopIntake(intake));
+    driver
+        .rightTrigger()
+        .onTrue(new IntakeFuel(intake1, intake2))
+        .onFalse(new StopIntake(intake1, intake2));
 
     // Driver - Reverse Intake
     driver
         .leftTrigger()
-        .whileTrue(new IntakeFuelReverse(intake))
-        .whileFalse(new StopIntake(intake));
+        .whileTrue(new IntakeFuelReverse(intake1, intake2))
+        .whileFalse(new StopIntake(intake1, intake2));
 
     // Operator - Limelight Aim at Hub (tags 25/26 blue, 9/10 red)
     driver
@@ -277,25 +283,25 @@ public class RobotContainer {
     // Operator - Shoot Fuel
     operator
         .leftTrigger()
-        .onTrue(new Shoot(shooter1, shooter2, shooter3))
-        .onFalse(new StopShooter(shooter1, shooter2, shooter3));
+        .onTrue(new Shoot(shooter1, shooter2, shooter3, shooter4))
+        .onFalse(new StopShooter(shooter1, shooter2, shooter3, shooter4));
 
     // Operator - Feed Fuel
     operator
         .rightTrigger()
-        .whileTrue(new FeedFuel(feeder, hopper))
-        .whileFalse(new StopFeederHopper(feeder, hopper));
+        .whileTrue(new FeedFuel(feeder1, feeder2, hopper))
+        .whileFalse(new StopFeederHopper(feeder1, feeder2, hopper));
 
     // Operator - Reverse Feeder
     operator
         .rightBumper()
-        .whileTrue(new FeedFuelReverse(feeder, hopper))
-        .whileFalse(new StopFeederHopper(feeder, hopper));
+        .whileTrue(new FeedFuelReverse(feeder1, feeder2, hopper))
+        .whileFalse(new StopFeederHopper(feeder1, feeder2, hopper));
   }
 
   private void registerNamedCommands() {
-    NamedCommands.registerCommand("StartIntake", new IntakeFuel(intake));
-    NamedCommands.registerCommand("StopIntake", new StopIntake(intake));
+    NamedCommands.registerCommand("StartIntake", new IntakeFuel(intake1, intake2));
+    NamedCommands.registerCommand("StopIntake", new StopIntake(intake1, intake2));
     NamedCommands.registerCommand("AgitateIntake", new AgitateIntake(intakePivot));
     NamedCommands.registerCommand("DeployIntake", new IntakeDeploy(intakePivot));
     NamedCommands.registerCommand("StowIntake", new IntakeStow(intakePivot));
@@ -303,9 +309,11 @@ public class RobotContainer {
         "AimAtHub",
         new LimelightAimCommand(drive, vision, () -> -driver.getLeftY(), () -> -driver.getLeftX()));
     NamedCommands.registerCommand(
-        "ShootAndFeed", new ShootAndFeed(hopper, feeder, shooter1, shooter2, shooter3));
+        "ShootAndFeed",
+        new ShootAndFeed(hopper, feeder1, feeder2, shooter1, shooter2, shooter3, shooter4));
     NamedCommands.registerCommand(
-        "StopShootAndFeed", new StopShootAndFeed(hopper, feeder, shooter1, shooter2, shooter3));
+        "StopShootAndFeed",
+        new StopShootAndFeed(hopper, feeder1, feeder2, shooter1, shooter2, shooter3, shooter4));
   }
 
   /**

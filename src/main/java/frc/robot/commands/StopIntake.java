@@ -5,8 +5,8 @@ import frc.robot.subsystems.intake.Intake;
 
 public class StopIntake extends SequentialCommandGroup {
 
-  public StopIntake(Intake intake) {
-    super(intake.getStopCommand());
-    addRequirements(intake);
+  public StopIntake(Intake intake1, Intake intake2) {
+    super(intake1.getStopCommand(), intake2.getStopCommand());
+    addRequirements(intake1, intake2);
   }
 }

@@ -53,13 +53,6 @@ public class FeederIOTalonFX implements FeederIO {
   }
 
   @Override
-  public void setTarget(Voltage target) {
-    Request = Request.withOutput(target);
-    Motor.setControl(Request);
-    m_setPoint = target;
-  }
-
-  @Override
   public void stop() {
     Motor.setControl(new StaticBrake());
   }

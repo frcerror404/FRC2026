@@ -11,9 +11,11 @@ public interface ShooterIO {
     public MutVoltage voltage;
     public MutCurrent supplyCurrent;
     public MutCurrent torqueCurrent;
+    public double shotSpeed;
+    public boolean isReverse;
   }
 
-  public void shootFuel(double shotSpeed);
+  public void shootFuel(double shotSpeed, boolean isReverse);
 
   public void updateInputs(ShooterIOInputs input);
 
