@@ -7,6 +7,10 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.controls.SolidColor;
+import com.ctre.phoenix6.hardware.CANdle;
+// import com.ctre.phoenix6.hardware.CANdle;
+import com.ctre.phoenix6.signals.RGBWColor;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -90,7 +94,8 @@ public class RobotContainer {
   private final IntakePivot intakePivot = new IntakePivot(16);
   private final Climber climber = new Climber(60);
 
-  // climber
+  // CANdle
+  private final CANdle candle = new CANdle(50, "2026 Swerve"); // climber
 
   // private final Climber climber = new Climber(1);
 
@@ -207,6 +212,10 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    candle.setControl(
+        new SolidColor(0, 8) // LEDs 0-7 (the built-in ones)
+            .withColor(new RGBWColor(128, 0, 128)));
 
     // Register Commands for Auton
   }
