@@ -5,7 +5,6 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.StaticBrake;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -39,7 +38,7 @@ public class ShooterIOTalonFX implements ShooterIO {
     reverseOutputsConfigs.withInverted(InvertedValue.Clockwise_Positive);
 
     limitConfigs.StatorCurrentLimit = 20;
-    limitConfigs.StatorCurrentLimitEnable = true;
+    limitConfigs.StatorCurrentLimitEnable = false;
 
     motorOutputConfigs.withInverted(InvertedValue.CounterClockwise_Positive);
     motorOutputConfigs.withNeutralMode(NeutralModeValue.Brake);
@@ -76,9 +75,9 @@ public class ShooterIOTalonFX implements ShooterIO {
   @Override
   public void shootFuel(double shotSpeed, boolean isReverse) {
     if (isReverse) {
-      Motor.setControl(new VelocityVoltage(shotSpeed).withSlot(0).withEnableFOC(true));
+      Motor.setControl(new VoltageOut(shotSpeed));
     } else {
-      Motor2.setControl(new VelocityVoltage(shotSpeed).withSlot(0).withEnableFOC(true));
+      Motor2.setControl(new VoltageOut(shotSpeed));
     }
   }
 
