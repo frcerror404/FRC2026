@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import com.ctre.phoenix6.controls.SolidColor;
 import com.ctre.phoenix6.hardware.CANdle;
 // import com.ctre.phoenix6.hardware.CANdle;
@@ -60,6 +58,7 @@ import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.CanDef;
 import frc.robot.util.CanDef.CanBus;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -84,7 +83,7 @@ public class RobotContainer {
   //   private final Climber climber = new Climber(60);
 
   // CANdle
-  private final CANdle candle = new CANdle(50, "2026 Swerve"); // climber
+  private final CANdle candle = new CANdle(50); // climber
 
   // private final Climber climber = new Climber(1);
 
@@ -118,17 +117,19 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        shooter = new Shooter(
-            new ShooterIOTalonFX(
-                rioCanBuilder.id(42).build(), 
-                rioCanBuilder.id(21).build(), 
-                rioCanBuilder.id(11).build()));
+        shooter =
+            new Shooter(
+                new ShooterIOTalonFX(
+                    rioCanBuilder.id(42).build(),
+                    rioCanBuilder.id(21).build(),
+                    rioCanBuilder.id(11).build()));
 
-        feeder = new Feeder(
-            new FeederIOTalonFX(
-                rioCanBuilder.id(22).build(),
-                rioCanBuilder.id(31).build()));
-        intake = new Intake(new IntakeIOTalonFX(rioCanBuilder.id(14).build(), rioCanBuilder.id(19).build()));
+        feeder =
+            new Feeder(
+                new FeederIOTalonFX(rioCanBuilder.id(22).build(), rioCanBuilder.id(31).build()));
+        intake =
+            new Intake(
+                new IntakeIOTalonFX(rioCanBuilder.id(14).build(), rioCanBuilder.id(19).build()));
         hopper = new Hopper(new HopperIOTalonFX(rioCanBuilder.id(12).build()));
 
         vision =
@@ -149,7 +150,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
 
         shooter = null;
-    
+
         feeder = null;
         intake = null;
         hopper = null;
@@ -240,10 +241,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // Driver - Run Intake
-    driver
-        .rightTrigger()
-        .onTrue(new IntakeFuel(intake))
-        .onFalse(new StopIntake(intake));
+    driver.rightTrigger().onTrue(new IntakeFuel(intake)).onFalse(new StopIntake(intake));
 
     // Driver - Reverse Intake
     driver
@@ -268,10 +266,7 @@ public class RobotContainer {
     operator.x().onTrue(new IntakeStow(intakePivot));
 
     // Operator - Shoot Fuel
-    operator
-        .leftTrigger()
-        .onTrue(new Shoot(shooter))
-        .onFalse(new StopShooter(shooter));
+    operator.leftTrigger().onTrue(new Shoot(shooter)).onFalse(new StopShooter(shooter));
 
     // Operator - Feed Fuel
     operator
@@ -295,12 +290,9 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "AimAtHub",
         new LimelightAimCommand(drive, vision, () -> -driver.getLeftY(), () -> -driver.getLeftX()));
+    NamedCommands.registerCommand("ShootAndFeed", new ShootAndFeed(hopper, feeder, shooter));
     NamedCommands.registerCommand(
-        "ShootAndFeed",
-        new ShootAndFeed(hopper, feeder, shooter));
-    NamedCommands.registerCommand(
-        "StopShootAndFeed",
-        new StopShootAndFeed(hopper, feeder, shooter));
+        "StopShootAndFeed", new StopShootAndFeed(hopper, feeder, shooter));
   }
 
   /**

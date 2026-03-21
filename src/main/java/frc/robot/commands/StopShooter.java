@@ -6,8 +6,7 @@ import frc.robot.subsystems.shooter.Shooter;
 public class StopShooter extends SequentialCommandGroup {
 
   public StopShooter(Shooter shooter) {
-    super(
-        shooter.getStopCommand());
+    super(shooter.getStopCommand());
     addRequirements(shooter);
   }
 }

@@ -3,7 +3,6 @@ package frc.robot.subsystems.shooter;
 import edu.wpi.first.units.measure.MutCurrent;
 import edu.wpi.first.units.measure.MutVoltage;
 import frc.robot.util.Gains;
-
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ShooterIO {

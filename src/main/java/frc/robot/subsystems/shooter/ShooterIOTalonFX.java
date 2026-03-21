@@ -75,7 +75,7 @@ public class ShooterIOTalonFX implements ShooterIO {
 
   @Override
   public void shootFuel(double shotSpeed) {
-      Motor1.setControl(new VoltageOut(shotSpeed).withEnableFOC(true));
+    Motor1.setControl(new VoltageOut(shotSpeed).withEnableFOC(true));
   }
 
   @Override

@@ -28,10 +28,10 @@ public class IntakeAngleIOTalonFX implements IntakeAngleIO {
   private Angle m_setPoint = Angle.ofRelativeUnits(.0, Rotations);
 
   public IntakeAngleIOTalonFX(CanDef motorId, CanDef canCoderId) {
-    Motor = new TalonFX(motorId.id(), motorId.bus());
+    Motor = new TalonFX(motorId.id());
     Request = new MotionMagicVoltage(canCoderOffset);
     coastRequest = new CoastOut();
-    canCoder = new CANcoder(canCoderId.id(), canCoderId.bus());
+    canCoder = new CANcoder(canCoderId.id());
 
     configureTalons();
   }

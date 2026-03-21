@@ -27,7 +27,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     Motor2 = new TalonFX(canbus2.id());
     Request = new VoltageOut(0.0);
 
-    Motor2.setControl( new Follower(Motor.getDeviceID(), MotorAlignmentValue.Opposed));
+    Motor2.setControl(new Follower(Motor.getDeviceID(), MotorAlignmentValue.Opposed));
 
     configureTalons();
   }

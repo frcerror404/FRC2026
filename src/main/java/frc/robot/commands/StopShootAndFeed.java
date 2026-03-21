@@ -7,14 +7,8 @@ import frc.robot.subsystems.shooter.Shooter;
 
 public class StopShootAndFeed extends SequentialCommandGroup {
 
-  public StopShootAndFeed(
-      Hopper hopper,
-      Feeder feeder,
-      Shooter shooter) {
-    super(
-        hopper.getStopCommand(),
-        feeder.getStopCommand(),
-        shooter.getStopCommand());
+  public StopShootAndFeed(Hopper hopper, Feeder feeder, Shooter shooter) {
+    super(hopper.getStopCommand(), feeder.getStopCommand(), shooter.getStopCommand());
     addRequirements(hopper, feeder, shooter);
   }
 }

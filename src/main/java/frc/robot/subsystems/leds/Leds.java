@@ -26,7 +26,7 @@ public class Leds extends SubsystemBase {
   private int b = 0;
 
   public Leds(int canID) {
-    candle = new CANdle(canID, "2026 Swerve");
+    candle = new CANdle(canID);
   }
 
   // Starts a countdown progress bar.

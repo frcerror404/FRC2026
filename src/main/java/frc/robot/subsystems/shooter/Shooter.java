@@ -3,19 +3,18 @@ package frc.robot.subsystems.shooter;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Volts;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LoggedTunableGainsBuilder;
+import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
   private final ShooterIO m_ShooterIO;
 
   ShooterIOInputsAutoLogged loggedshooter = new ShooterIOInputsAutoLogged();
 
-   public LoggedTunableGainsBuilder tunableGains =
+  public LoggedTunableGainsBuilder tunableGains =
       new LoggedTunableGainsBuilder("Shooter", 35, 0, 1, 0, .288, 0, 0, 300, 10, 0, 0, 0);
 
   public Shooter(ShooterIO ShooterIO) {
