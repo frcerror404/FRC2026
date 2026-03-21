@@ -9,20 +9,12 @@ public class ShootAndFeed extends SequentialCommandGroup {
 
   public ShootAndFeed(
       Hopper hopper,
-      Feeder feeder1,
-      Feeder feeder2,
-      Shooter shooter1,
-      Shooter shooter2,
-      Shooter shooter3,
-      Shooter shooter4) {
+      Feeder feeder,
+      Shooter shooter) {
     super(
         hopper.runHopper(6),
-        feeder1.runFeeder(6),
-        feeder2.runFeeder(6),
-        shooter1.shootFuel(8, true),
-        shooter2.shootFuel(8, true),
-        shooter3.shootFuel(8, false),
-        shooter4.shootFuel(8, false));
-    addRequirements(hopper, feeder1, feeder2, shooter1, shooter2, shooter3, shooter4);
+        feeder.runFeeder(6),
+        shooter.shootFuel(8));
+    addRequirements(hopper, feeder, shooter);
   }
 }

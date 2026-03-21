@@ -41,10 +41,6 @@ public class Intake extends SubsystemBase {
     return new InstantCommand(() -> m_IntakeIO.runIntake(intakeSpeed), this);
   }
 
-  public Command runIntakeReverse(double intakeSpeed) {
-    return new InstantCommand(() -> m_IntakeIO.runIntakeReverse(intakeSpeed), this);
-  }
-
   public Command getNewSetVoltsCommand(LoggedTunableNumber volts) {
     return new InstantCommand(
         () -> {

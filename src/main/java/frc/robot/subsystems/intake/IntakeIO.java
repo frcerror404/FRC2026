@@ -22,8 +22,6 @@ public interface IntakeIO {
 
   public void runIntake(double intakeSpeed);
 
-  public void runIntakeReverse(double intakeSpeed);
-
   public void updateInputs(IntakeIOInputs input);
 
   public void stop();

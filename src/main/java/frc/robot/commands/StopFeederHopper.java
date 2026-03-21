@@ -6,8 +6,8 @@ import frc.robot.subsystems.hopper.Hopper;
 
 public class StopFeederHopper extends SequentialCommandGroup {
 
-  public StopFeederHopper(Feeder feeder1, Feeder feeder2, Hopper hopper) {
-    super(feeder1.getStopCommand(), feeder2.getStopCommand(), hopper.getStopCommand());
-    addRequirements(feeder1, feeder2, hopper);
+  public StopFeederHopper(Feeder feeder, Hopper hopper) {
+    super(feeder.getStopCommand(), hopper.getStopCommand());
+    addRequirements(feeder, hopper);
   }
 }
