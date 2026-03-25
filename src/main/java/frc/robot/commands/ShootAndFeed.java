@@ -8,7 +8,7 @@ import frc.robot.subsystems.shooter.Shooter;
 public class ShootAndFeed extends SequentialCommandGroup {
 
   public ShootAndFeed(Hopper hopper, Feeder feeder, Shooter shooter) {
-    super(hopper.runHopper(6), feeder.runFeeder(6), shooter.shootFuel(8));
+    super(hopper.runHopper(-6), feeder.runFeeder(-6), shooter.shootFuel(-6));
     addRequirements(hopper, feeder, shooter);
   }
 }

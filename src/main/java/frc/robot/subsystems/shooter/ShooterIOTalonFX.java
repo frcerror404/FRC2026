@@ -20,19 +20,22 @@ public class ShooterIOTalonFX implements ShooterIO {
   public TalonFX Motor1;
   public TalonFX Motor2;
   public TalonFX Motor3;
+  public TalonFX Motor4;
   public Slot0Configs Slot0Configs;
   public MotorOutputConfigs motorOutputConfigs;
   public CurrentLimitsConfigs limitConfigs;
   public double shotSpeed;
   public boolean isReverse;
 
-  public ShooterIOTalonFX(CanDef canbus1, CanDef canbus2, CanDef canbus3) {
+  public ShooterIOTalonFX(CanDef canbus1, CanDef canbus2, CanDef canbus3, CanDef canbus4) {
     Motor1 = new TalonFX(canbus1.id());
     Motor2 = new TalonFX(canbus2.id());
     Motor3 = new TalonFX(canbus3.id());
+    Motor4 = new TalonFX(canbus4.id());
 
     Motor2.setControl(new Follower(Motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     Motor3.setControl(new Follower(Motor1.getDeviceID(), MotorAlignmentValue.Opposed));
+    Motor4.setControl(new Follower(Motor1.getDeviceID(), MotorAlignmentValue.Opposed));
 
     configureTalons();
   }
@@ -41,10 +44,12 @@ public class ShooterIOTalonFX implements ShooterIO {
     limitConfigs = new CurrentLimitsConfigs();
     motorOutputConfigs = new MotorOutputConfigs();
 
-    limitConfigs.StatorCurrentLimit = 20;
-    limitConfigs.StatorCurrentLimitEnable = false;
+    limitConfigs.StatorCurrentLimit = 80;
+    limitConfigs.StatorCurrentLimitEnable = true;
+    limitConfigs.SupplyCurrentLimit = 40;
+    limitConfigs.StatorCurrentLimitEnable = true;
 
-    motorOutputConfigs.withInverted(InvertedValue.CounterClockwise_Positive);
+    motorOutputConfigs.withInverted(InvertedValue.Clockwise_Positive);
     motorOutputConfigs.withNeutralMode(NeutralModeValue.Brake);
 
     final TalonFXConfiguration commonConfigs =

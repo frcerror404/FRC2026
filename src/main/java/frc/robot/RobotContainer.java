@@ -11,19 +11,17 @@ import com.ctre.phoenix6.controls.SolidColor;
 import com.ctre.phoenix6.hardware.CANdle;
 // import com.ctre.phoenix6.hardware.CANdle;
 import com.ctre.phoenix6.signals.RGBWColor;
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AgitateIntake;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedFuel;
-import frc.robot.commands.FeedFuelReverse;
 import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.IntakeFuel;
 import frc.robot.commands.IntakeFuelReverse;
@@ -58,7 +56,6 @@ import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.CanDef;
 import frc.robot.util.CanDef.CanBus;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -76,6 +73,29 @@ public class RobotContainer {
   private final Intake intake;
 
   private final Vision vision;
+
+  PowerDistribution PD = new PowerDistribution();
+
+  double channel0 = PD.getCurrent(0);
+  double channel1 = PD.getCurrent(1);
+  double channel2 = PD.getCurrent(2);
+  double channel3 = PD.getCurrent(3);
+  double channel4 = PD.getCurrent(4);
+  double channel5 = PD.getCurrent(5);
+  double channel6 = PD.getCurrent(6);
+  double channel7 = PD.getCurrent(7);
+  double channel8 = PD.getCurrent(8);
+  double channel9 = PD.getCurrent(9);
+  double channel10 = PD.getCurrent(10);
+  double channel11 = PD.getCurrent(11);
+  double channel12 = PD.getCurrent(12);
+  double channel13 = PD.getCurrent(13);
+  double channel14 = PD.getCurrent(14);
+  double channel15 = PD.getCurrent(15);
+  double channel16 = PD.getCurrent(16);
+  double channel17 = PD.getCurrent(17);
+  double channel18 = PD.getCurrent(18);
+  double channel19 = PD.getCurrent(19);
 
   // Intake
   // (Roller ID, Pivot ID)
@@ -95,7 +115,7 @@ public class RobotContainer {
   // private final LimelightLoggerSubsystem limelightLoggerSubsystem;
 
   // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+  //   private final LoggedDashboardChooser<Command> autoChooser;
   private boolean slowMode = false;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -122,7 +142,8 @@ public class RobotContainer {
                 new ShooterIOTalonFX(
                     rioCanBuilder.id(42).build(),
                     rioCanBuilder.id(21).build(),
-                    rioCanBuilder.id(11).build()));
+                    rioCanBuilder.id(24).build(),
+                    rioCanBuilder.id(7).build()));
 
         feeder =
             new Feeder(
@@ -182,14 +203,14 @@ public class RobotContainer {
 
     // Set up auto routines
 
-    registerNamedCommands();
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    // registerNamedCommands();
+    // autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
     // autoChooser.addOption(
     //     "Drive SysId (Quasistatic Forward)",
     //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
@@ -210,6 +231,8 @@ public class RobotContainer {
 
     // Register Commands for Auton
   }
+
+  private void trackCurrentDraw() {}
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -240,14 +263,17 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // Driver - Run Intake
-    driver.rightTrigger().onTrue(new IntakeFuel(intake)).onFalse(new StopIntake(intake));
+    // // Driver - Run Intake
+    // driver
+    //     .rightTrigger()
+    //     .onTrue(new FeedFuel(feeder, hopper))
+    //     .onFalse(new StopFeederHopper(feeder, hopper));
 
-    // Driver - Reverse Intake
-    driver
-        .leftTrigger()
-        .whileTrue(new IntakeFuelReverse(intake))
-        .whileFalse(new StopIntake(intake));
+    // // Driver - Reverse Intake
+    // driver
+    //     .leftTrigger()
+    //     .whileTrue(new IntakeFuelReverse(intake))
+    //     .whileFalse(new StopIntake(intake));
 
     // Operator - Limelight Aim at Hub (tags 25/26 blue, 9/10 red)
     driver
@@ -260,10 +286,12 @@ public class RobotContainer {
     operator.a().onTrue(new IntakeDeploy(intakePivot));
 
     // Operator - Agitate Intake
-    operator.b().onTrue(new AgitateIntake(intakePivot));
+    operator.b().onTrue(new IntakeStow(intakePivot));
 
     // Operator - Stow Intake
-    operator.x().onTrue(new IntakeStow(intakePivot));
+    operator.x().onTrue(new IntakeFuel(intake)).onFalse(new StopIntake(intake));
+
+    operator.y().onTrue(new IntakeFuelReverse(intake)).onFalse(new StopIntake(intake));
 
     // Operator - Shoot Fuel
     operator.leftTrigger().onTrue(new Shoot(shooter)).onFalse(new StopShooter(shooter));
@@ -274,11 +302,16 @@ public class RobotContainer {
         .whileTrue(new FeedFuel(feeder, hopper))
         .whileFalse(new StopFeederHopper(feeder, hopper));
 
+    operator
+        .leftBumper()
+        .whileTrue(new AgitateIntake(intakePivot))
+        .whileFalse(new IntakeDeploy(intakePivot));
+
     // Operator - Reverse Feeder
     operator
         .rightBumper()
-        .whileTrue(new FeedFuelReverse(feeder, hopper))
-        .whileFalse(new StopFeederHopper(feeder, hopper));
+        .whileTrue(new ShootAndFeed(hopper, feeder, shooter))
+        .whileFalse(new StopShootAndFeed(hopper, feeder, shooter));
   }
 
   private void registerNamedCommands() {
@@ -298,9 +331,9 @@ public class RobotContainer {
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
-   * @return the command to run in autonomous
+   * @return the command to run in autonomous //
    */
-  public Command getAutonomousCommand() {
-    return autoChooser.get();
-  }
+  //   public Command getAutonomousCommand() {
+  //     // return autoChooser.get();
+  //   }
 }
