@@ -78,31 +78,10 @@ public class RobotContainer {
 
   private final Vision vision;
 
-  PowerDistribution PD = new PowerDistribution();
-
-  double channel0 = PD.getCurrent(0);
-  double channel1 = PD.getCurrent(1);
-  double channel2 = PD.getCurrent(2);
-  double channel3 = PD.getCurrent(3);
-  double channel4 = PD.getCurrent(4);
-  double channel5 = PD.getCurrent(5);
-  double channel6 = PD.getCurrent(6);
-  double channel7 = PD.getCurrent(7);
-  double channel8 = PD.getCurrent(8);
-  double channel9 = PD.getCurrent(9);
-  double channel10 = PD.getCurrent(10);
-  double channel11 = PD.getCurrent(11);
-  double channel12 = PD.getCurrent(12);
-  double channel13 = PD.getCurrent(13);
-  double channel14 = PD.getCurrent(14);
-  double channel15 = PD.getCurrent(15);
-  double channel16 = PD.getCurrent(16);
-  double channel17 = PD.getCurrent(17);
-  double channel18 = PD.getCurrent(18);
-  double channel19 = PD.getCurrent(19);
-
+  // Power Distibution
+  PowerDistribution PD = new PowerDistibution();
+  
   // Intake
-  // (Roller ID, Pivot ID)
   private final IntakePivot intakePivot = new IntakePivot(16);
   //   private final Climber climber = new Climber(60);
 
@@ -338,4 +317,13 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
+
+  public void logPowerDistibution() {
+    for (int i = 0; i < 20; i++) {
+      Logger.recordOutput("PowerDistribution/Channel" + i, PD.get Current(i));
+    }
+    Logger.recordOutput("PowerDistribution/TotalCurrent", PD.getTotalCurrent());
+    Logger.recordOutput("PowerDistribution/Voltage", PD.getVoltage());
+    Logger.recordOutput("PowerDistribution/TotalPower", PD.getTotalPower());
+    Logger.recordOutput("PowerDistribution/TotalEnergy", PD.getTotalEnergy());
 }
