@@ -59,7 +59,10 @@ import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.CanDef;
 import frc.robot.util.CanDef.CanBus;
+
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -79,7 +82,7 @@ public class RobotContainer {
   private final Vision vision;
 
   // Power Distibution
-  PowerDistribution PD = new PowerDistibution();
+  PowerDistribution PD = new PowerDistribution();
   
   // Intake
   private final IntakePivot intakePivot = new IntakePivot(16);
@@ -318,12 +321,13 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
-  public void logPowerDistibution() {
+  public void logPowerDistribution() {
     for (int i = 0; i < 20; i++) {
-      Logger.recordOutput("PowerDistribution/Channel" + i, PD.get Current(i));
+      Logger.recordOutput("PowerDistribution/Channel" + i, PD.getCurrent(i));
     }
     Logger.recordOutput("PowerDistribution/TotalCurrent", PD.getTotalCurrent());
     Logger.recordOutput("PowerDistribution/Voltage", PD.getVoltage());
     Logger.recordOutput("PowerDistribution/TotalPower", PD.getTotalPower());
     Logger.recordOutput("PowerDistribution/TotalEnergy", PD.getTotalEnergy());
+  }
 }
