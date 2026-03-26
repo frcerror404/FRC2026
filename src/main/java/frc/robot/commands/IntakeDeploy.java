@@ -5,16 +5,16 @@ import frc.robot.subsystems.intakePivot.IntakePivot;
 
 public class IntakeDeploy extends Command {
 
-  private final IntakePivot intake;
+  private final IntakePivot intakePivot;
 
-  public IntakeDeploy(IntakePivot intake) {
-    this.intake = intake;
-    addRequirements(intake);
+  public IntakeDeploy(IntakePivot intakePivot) {
+    this.intakePivot = intakePivot;
+    addRequirements(intakePivot);
   }
 
   @Override
   public void initialize() {
-    intake.pivotToIntake();
+    intakePivot.pivotToIntake();
   }
 
   @Override

@@ -57,11 +57,19 @@ public class IntakeIOTalonFX implements IntakeIO {
   }
 
   @Override
-  public void updateInputs(IntakeIO.IntakeIOInputs inputs) {
-    inputs.angularVelocity.mut_replace(Motor.getVelocity().getValue());
-    inputs.voltageSetPoint.mut_replace(m_setPoint);
-    inputs.voltage.mut_replace(Motor.getMotorVoltage().getValue());
-    inputs.supplyCurrent.mut_replace(Motor.getSupplyCurrent().getValue());
+  public void updateInputs(IntakeIOInputs inputs) {
+    inputs.intakemotor1voltage.mut_replace(Motor.getMotorVoltage().getValue());
+    inputs.intakemotor1velocity.mut_replace(Motor.getVelocity().getValue());
+    inputs.intakemotor1supplyCurrent.mut_replace(Motor.getSupplyCurrent().getValue());
+    inputs.intakemotor1statorCurrent.mut_replace(Motor.getStatorCurrent().getValue());
+    inputs.intakemotor1torqueCurrent.mut_replace(Motor.getTorqueCurrent().getValue());
+    inputs.intakemotor1Temp.mut_replace(Motor.getDeviceTemp().getValue());
+    inputs.intakemotor2voltage.mut_replace(Motor2.getMotorVoltage().getValue());
+    inputs.intakemotor2velocity.mut_replace(Motor2.getVelocity().getValue());
+    inputs.intakemotor2supplyCurrent.mut_replace(Motor2.getSupplyCurrent().getValue());
+    inputs.intakemotor2statorCurrent.mut_replace(Motor2.getStatorCurrent().getValue());
+    inputs.intakemotor2torqueCurrent.mut_replace(Motor2.getTorqueCurrent().getValue());
+    inputs.intakemotor2Temp.mut_replace(Motor2.getDeviceTemp().getValue());
   }
 
   @Override

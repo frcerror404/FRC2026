@@ -2,6 +2,7 @@ package frc.robot.subsystems.hopper;
 
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutCurrent;
+import edu.wpi.first.units.measure.MutTemperature;
 import edu.wpi.first.units.measure.MutVoltage;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -9,11 +10,14 @@ public interface HopperIO {
 
   @AutoLog
   public static class HopperIOInputs {
-    public MutAngularVelocity angularVelocity;
-    public MutVoltage voltage;
-    public MutVoltage voltageSetPoint;
-    public MutCurrent supplyCurrent;
-    public MutCurrent torqueCurrent;
+    public MutAngularVelocity hoppervelocity;
+    public MutVoltage hoppervoltage;
+    public MutVoltage hoppervoltageSetPoint;
+    public MutCurrent hoppersupplyCurrent;
+    public MutCurrent hoppertorqueCurrent;
+    public MutCurrent hopperstatorCurrent;
+    public MutTemperature hoppertemperature;
+
     public double hopperSpeed;
   }
 

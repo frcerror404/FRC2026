@@ -33,9 +33,9 @@ public class HopperIOTalonFX implements HopperIO {
     CurrentLimitsConfigs limitConfigs = new CurrentLimitsConfigs();
     MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
 
-    limitConfigs.StatorCurrentLimit = 40;
+    limitConfigs.StatorCurrentLimit = 30;
     limitConfigs.StatorCurrentLimitEnable = true;
-    limitConfigs.SupplyCurrentLimit = 25;
+    limitConfigs.SupplyCurrentLimit = 20;
     limitConfigs.StatorCurrentLimitEnable = true;
 
     motorOutputConfigs.withInverted(InvertedValue.Clockwise_Positive);
@@ -50,10 +50,12 @@ public class HopperIOTalonFX implements HopperIO {
 
   @Override
   public void updateInputs(HopperIOInputs inputs) {
-    inputs.angularVelocity.mut_replace(Motor.getVelocity().getValue());
-    inputs.voltageSetPoint.mut_replace(m_setPoint);
-    inputs.voltage.mut_replace(Motor.getMotorVoltage().getValue());
-    inputs.supplyCurrent.mut_replace(Motor.getSupplyCurrent().getValue());
+    inputs.hoppervoltage.mut_replace(Motor.getMotorVoltage().getValue());
+    inputs.hoppervelocity.mut_replace(Motor.getVelocity().getValue());
+    inputs.hoppersupplyCurrent.mut_replace(Motor.getSupplyCurrent().getValue());
+    inputs.hopperstatorCurrent.mut_replace(Motor.getStatorCurrent().getValue());
+    inputs.hoppertorqueCurrent.mut_replace(Motor.getTorqueCurrent().getValue());
+    inputs.hoppertemperature.mut_replace(Motor.getDeviceTemp().getValue());
   }
 
   @Override

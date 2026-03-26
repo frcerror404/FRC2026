@@ -1,12 +1,14 @@
 package frc.robot.subsystems.feeder;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Celsius;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class Feeder extends SubsystemBase {
   private final FeederIO m_FeederIO;
@@ -15,11 +17,18 @@ public class Feeder extends SubsystemBase {
 
   public Feeder(FeederIO FeederIO) {
     m_FeederIO = FeederIO;
-    loggedfeeder.angularVelocity = DegreesPerSecond.mutable(0);
-    loggedfeeder.supplyCurrent = Amps.mutable(0);
-    loggedfeeder.torqueCurrent = Amps.mutable(0);
-    loggedfeeder.voltageSetPoint = Volts.mutable(0);
-    loggedfeeder.voltage = Volts.mutable(0);
+    loggedfeeder.feedermotor1supplyCurrent = Amps.mutable(0);
+    loggedfeeder.feedermotor1statorCurrent = Amps.mutable(0);
+    loggedfeeder.feedermotor1torqueCurrent = Amps.mutable(0);
+    loggedfeeder.feedermotor1voltage = Volts.mutable(0);
+    loggedfeeder.feedermotor1velocity = RotationsPerSecond.mutable(0);
+    loggedfeeder.feedermotor1Temp = Celsius.mutable(0);
+    loggedfeeder.feedermotor2supplyCurrent = Amps.mutable(0);
+    loggedfeeder.feedermotor2statorCurrent = Amps.mutable(0);
+    loggedfeeder.feedermotor2torqueCurrent = Amps.mutable(0);
+    loggedfeeder.feedermotor2voltage = Volts.mutable(0);
+    loggedfeeder.feedermotor2velocity = RotationsPerSecond.mutable(0);
+    loggedfeeder.feedermotor2Temp = Celsius.mutable(0);
   }
 
   public Command runFeeder(double feederSpeed) {
@@ -33,5 +42,6 @@ public class Feeder extends SubsystemBase {
   @Override
   public void periodic() {
     m_FeederIO.updateInputs(loggedfeeder);
+    Logger.processInputs("RobotState/Feeder", loggedfeeder);
   }
 }

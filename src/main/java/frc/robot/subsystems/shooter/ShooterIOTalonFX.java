@@ -50,7 +50,7 @@ public class ShooterIOTalonFX implements ShooterIO {
     limitConfigs.StatorCurrentLimitEnable = true;
 
     motorOutputConfigs.withInverted(InvertedValue.Clockwise_Positive);
-    motorOutputConfigs.withNeutralMode(NeutralModeValue.Brake);
+    motorOutputConfigs.withNeutralMode(NeutralModeValue.Coast);
 
     final TalonFXConfiguration commonConfigs =
         new TalonFXConfiguration()
@@ -58,6 +58,9 @@ public class ShooterIOTalonFX implements ShooterIO {
             .withCurrentLimits(limitConfigs);
 
     PhoenixUtil.tryUntilOk(5, () -> Motor1.getConfigurator().apply(commonConfigs));
+    PhoenixUtil.tryUntilOk(5, () -> Motor2.getConfigurator().apply(commonConfigs));
+    PhoenixUtil.tryUntilOk(5, () -> Motor3.getConfigurator().apply(commonConfigs));
+    PhoenixUtil.tryUntilOk(5, () -> Motor4.getConfigurator().apply(commonConfigs));
   }
 
   @Override
@@ -74,8 +77,30 @@ public class ShooterIOTalonFX implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.voltage.mut_replace(Motor1.getMotorVoltage().getValue());
-    inputs.supplyCurrent.mut_replace(Motor1.getSupplyCurrent().getValue());
+    inputs.shootermotor1voltage.mut_replace(Motor1.getMotorVoltage().getValue());
+    inputs.shootermotor1velocity.mut_replace(Motor1.getVelocity().getValue());
+    inputs.shootermotor1supplyCurrent.mut_replace(Motor1.getSupplyCurrent().getValue());
+    inputs.shootermotor1statorCurrent.mut_replace(Motor1.getStatorCurrent().getValue());
+    inputs.shootermotor1torqueCurrent.mut_replace(Motor1.getTorqueCurrent().getValue());
+    inputs.shootermotor1Temp.mut_replace(Motor1.getDeviceTemp().getValue());
+    inputs.shootermotor2voltage.mut_replace(Motor2.getMotorVoltage().getValue());
+    inputs.shootermotor2velocity.mut_replace(Motor2.getVelocity().getValue());
+    inputs.shootermotor2supplyCurrent.mut_replace(Motor2.getSupplyCurrent().getValue());
+    inputs.shootermotor2statorCurrent.mut_replace(Motor2.getStatorCurrent().getValue());
+    inputs.shootermotor2torqueCurrent.mut_replace(Motor2.getTorqueCurrent().getValue());
+    inputs.shootermotor2Temp.mut_replace(Motor2.getDeviceTemp().getValue());
+    inputs.shootermotor3voltage.mut_replace(Motor3.getMotorVoltage().getValue());
+    inputs.shootermotor3velocity.mut_replace(Motor3.getVelocity().getValue());
+    inputs.shootermotor3supplyCurrent.mut_replace(Motor3.getSupplyCurrent().getValue());
+    inputs.shootermotor3statorCurrent.mut_replace(Motor3.getStatorCurrent().getValue());
+    inputs.shootermotor3torqueCurrent.mut_replace(Motor3.getTorqueCurrent().getValue());
+    inputs.shootermotor3Temp.mut_replace(Motor3.getDeviceTemp().getValue());
+    inputs.shootermotor4voltage.mut_replace(Motor4.getMotorVoltage().getValue());
+    inputs.shootermotor4velocity.mut_replace(Motor4.getVelocity().getValue());
+    inputs.shootermotor4supplyCurrent.mut_replace(Motor4.getSupplyCurrent().getValue());
+    inputs.shootermotor4statorCurrent.mut_replace(Motor4.getStatorCurrent().getValue());
+    inputs.shootermotor4torqueCurrent.mut_replace(Motor4.getTorqueCurrent().getValue());
+    inputs.shootermotor4Temp.mut_replace(Motor4.getDeviceTemp().getValue());
   }
 
   @Override
